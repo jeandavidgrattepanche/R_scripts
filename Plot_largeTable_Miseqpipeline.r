@@ -18,6 +18,22 @@ testb <- as.matrix(data.all[c(0:15)])
 TAX <- tax_table(testb)
 physeq <- phyloseq(mytable, envdata, TAX)
 
+#read distribution OTUs and Samples
+readnumb = data.frame(readn = sort(taxa_sums(physeq), TRUE), sorted = 1:ntaxa(physeq), type = "OTUS")
+readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples")
+titlenb = "read number distribution"
+p = ggplot(readnumb, aes(x= sorted, y = readn)) + geom_bar(stat="identity")
+p + ggtitle(titlenb) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
+
+
+#check if empty sample - can be useful after next step
+any(sample_sums(physeq) == 0)
+physeq = prune_samples(sample_sums(physeq) >0, physeq)
+
+#remove singleton ! be careful if samples are already rarefy
+physeq.bc = physeq # backup in case 
+physeq = prune_taxa(taxa_sums(physeq) > 1, physeq)
+
 #subsample to reduce the number of OTU (crash R on the server)
 #physeq.mil <- get_top_taxa(physeq, 1500000, relative = FALSE, discard_other= TRUE, other_label="Other")
 
