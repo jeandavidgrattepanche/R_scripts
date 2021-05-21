@@ -20,7 +20,7 @@ physeq <- phyloseq(mytable, envdata, TAX)
 
 #read distribution OTUs and Samples
 readnumb = data.frame(readn = sort(taxa_sums(physeq), TRUE), sorted = 1:ntaxa(physeq), type = "OTUS")
-readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples")
+readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples"))
 titlenb = "read number distribution"
 p = ggplot(readnumb, aes(x= sorted, y = readn)) + geom_bar(stat="identity")
 p + ggtitle(titlenb) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")

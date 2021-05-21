@@ -21,7 +21,7 @@ physeq.bc = physeq # backup in case
 
 #read distribution OTUs and Samples
 readnumb = data.frame(readn = sort(taxa_sums(physeq), TRUE), sorted = 1:ntaxa(physeq), type = "OTUS")
-readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples")
+readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples"))
 titlenb = "read number distribution"
 p = ggplot(readnumb, aes(x= sorted, y = readn)) + geom_bar(stat="identity")
 plotp = p + ggtitle(titlenb) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
@@ -38,7 +38,7 @@ physeq = prune_taxa(taxa_sums(physeq) > 1, physeq)
 
 #read distribution OTUs and Samples no singelton
 readnumb = data.frame(readn = sort(taxa_sums(physeq), TRUE), sorted = 1:ntaxa(physeq), type = "OTUS")
-readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples")
+readnumb = rbind(readnumb, data.frame(readn = sort(sample_sums(physeq), TRUE), sorted = 1:nsamples(physeq), type = "Samples"))
 titlenbns = "read number distribution no singleton"
 p = ggplot(readnumb, aes(x= sorted, y = readn)) + geom_bar(stat="identity")
 plotp = p + ggtitle(titlenbns) + scale_y_log10() + facet_wrap(~type, 1, scales = "free")
