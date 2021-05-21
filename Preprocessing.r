@@ -11,7 +11,7 @@ source('/home/tuk61790/HPCr/get_top_taxa.R', chdir = TRUE)
 
 #create phyloseq/physeq objects
 data.all <- read.table('OTUtable_ingroup_noTtree.txt')
-mytable = otu_table(cbind(data.all[c(0)],data.all[c(16:111)]), #taxa_are_rows=TRUE,errorIfNULL=TRUE)
+mytable = otu_table(cbind(data.all[c(0)],data.all[c(16:111)]), taxa_are_rows=TRUE,errorIfNULL=TRUE)
 env.all <- read.table('NBP1910_envdata_v3b_size_noNaN.txt')
 envdata = sample_data(env.all)
 testb <- as.matrix(data.all[c(0:15)])
