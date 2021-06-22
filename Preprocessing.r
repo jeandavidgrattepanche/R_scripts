@@ -45,3 +45,11 @@ plotp = p + ggtitle(titlenbns) + scale_y_log10() + facet_wrap(~type, 1, scales =
 jpeg(filename='barplot_read_nosing.jpeg', width=60, height=15, unit="cm", res=100)
 print(plotp)
 dev.off()
+
+#plot richness by size fraction and layer # need to check parameter and add trophic statue to all OTUs on Tax_table
+Mixo <- subset_taxa(physeq, trophic == "Mixo")
+Het <- subset_taxa(physeq, trophic == "Hetero")
+Photo <- subset_taxa(physeq, trophic == "Photo")
+
+plot_richness(physeq, x ="station", color="Lat", measures="Chao1", nrow = 3, title = "distribution") +
+facet_grid(size~depth, scale= "free_x",drop=TRUE)
