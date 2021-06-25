@@ -71,9 +71,14 @@ plot(ordplotPp)
 #points(PCoA$vectors[,1],PCoA$vectors[,2], cex=0.5, col=map.df$size, pch=19)
 #ordiellipse(PCoA$vectors, map.df$size,label=TRUE,cex=0.7,conf=0.99,col="yellow")
 
+#envfit for each parameters in my env_data table (+)
 ordMDS <- metaMDS(t(otu_table(physeq)))
 ordMDS.fit <- envfit(ordMDS ~ bottom + ice + airT + depth_m + size_num +  depSM + waterT1 + conductivity1 + oxygen1 +  fluorescence +  beamTrans + PAR1 +  latitude +  longitude +  timeJ +  altM +  spar + salinity1 + oxygenSaturation + bprod + pprod_Sun + pprod_PAR, data=sample.data.table(physeq), perm=999, na.rm = TRUE)
 plot(ordMDS, dis="site")
 plot(ordMDS.fit)
 text(ordMDS, display="sites")
 ordMDS.fit
+
+#adonis for some parameters and their interaction (*)
+Adonis.results = adonis(formula = distance(physeq, "jaccard") ~ size * Group * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="n", append=TRUE)
