@@ -22,7 +22,7 @@ physeq.mil <- get_top_taxa(physeq, 1500, relative = FALSE, discard_other= TRUE, 
 
 
 #convert abundance in percentage:
-physeq.perc = transform_sample_counts(physeq, function(x) 100 * x/sum(x))
+physeq.perc = transform_sample_counts(physeq.mil, function(x) 100 * x/sum(x))
 
 # add a variable to reduce number of samples : merge station to group
 sample_data(physeq.perc)$GLS <- mapply(paste0, as.character(get_variable(physeq.perc,"Group")), collaspe = '_', as.character(get_variable(physeq.perc,"layer")),collaspe = '_', as.character(get_variable(physeq.perc,"size")))
@@ -39,10 +39,10 @@ sample_data(physeq.group)$S <- mapply(paste0, as.character(renam[,3]))
 
 
 # select taxa group: 
-print("select taxa")
-physeq.sp <- tax_glom(physeq.group, taxrank="Bsp", NArm = FALSE) 
+#print("select taxa")
+#physeq.sp <- tax_glom(physeq.group, taxrank="Bsp", NArm = FALSE) 
 
-datatorun <- physeq.sp
+datatorun <- physeq.group
 
 #create network plot for each size fraction. size can be replace by another varaible
 sizes <- c("micro","nano","pico")
@@ -50,18 +50,18 @@ Group <- c("other","northern","southern","offshore")
 ind <- "jaccard" 
 list <- list()
 i = 0
-for(G in Group){
+for(Gp in Group){
 	for(sizedata in sizes){
 		i = i + 1
-		named <- paste(G,sizedata,sep = "-")
+		named <- paste(Gp,sizedata,sep = "-")
 		print(named)
-		network <- make_network(subset_samples(datatorun, S == sizedata), type="taxa", distance = ind, max.dist = 0.3, keep.isolates=FALSE)
-		ordplotPm <- plot_network(network, subset_samples(datatorun, S == sizedata), type ="taxa", color="Btaxo_rank4", shape="Btaxo_rank2",title=named)
+		network <- make_network(subset_samples(subset_samples(datatorun, S == sizedata), G == Gp), type="taxa", distance = ind, max.dist = 0.3, keep.isolates=FALSE)
+		ordplotPm <- plot_network(network, subset_samples(subset_samples(datatorun, S == sizedata), G == Gp), type ="taxa", color="Btaxo_rank4", label=NULL ,title=named)
 		assign(paste("p",i,sep=""), ordplotPm)
 		list[[length(list)+1]] <- paste("p",i,sep="")
 		plot(get(paste("p",i,sep="")))
 	}
 }
 pdf('Network_size_group.pdf')
-multiplot(p1 + theme(legend.position="none"),p2+ theme(legend.position="none"),p3+ theme(legend.position="none"),p4+ theme(legend.position="none"),p5+ theme(legend.position="none"),p6+ theme(legend.position="none"),p7+ theme(legend.position="none"),p8+ theme(legend.position="none"),p9+ theme(legend.position="none"),cols=3)
+multiplot(p1 + theme(legend.position="none"),p2+ theme(legend.position="none"),p3+ theme(legend.position="none"),p4+ theme(legend.position="none"),p5+ theme(legend.position="none"),p6+ theme(legend.position="none"),p7+ theme(legend.position="none"),p8+ theme(legend.position="none"),p9+ theme(legend.position="none"),p10+ theme(legend.position="none"),p11+ theme(legend.position="none"),p12+ theme(legend.position="none"),cols=4)
 dev.off()
