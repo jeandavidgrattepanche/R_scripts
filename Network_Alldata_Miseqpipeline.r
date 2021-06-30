@@ -56,7 +56,7 @@ for(G in Group){
 		named <- paste(G,sizedata,sep = "-")
 		print(named)
 		network <- make_network(subset_samples(datatorun, S == sizedata), type="taxa", distance = ind, max.dist = 0.3, keep.isolates=FALSE)
-		ordplotPm <- plot_network(network, subset_samples(datatorun, S == sizedata), type ="taxa", color="class", shape="Btaxo_rank2",title=named)
+		ordplotPm <- plot_network(network, subset_samples(datatorun, S == sizedata), type ="taxa", color="Btaxo_rank4", shape="Btaxo_rank2",title=named)
 		assign(paste("p",i,sep=""), ordplotPm)
 		list[[length(list)+1]] <- paste("p",i,sep="")
 		plot(get(paste("p",i,sep="")))
