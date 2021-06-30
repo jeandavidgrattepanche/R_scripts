@@ -63,5 +63,6 @@ for(Gp in Group){
 	}
 }
 pdf('Network_size_group.pdf')
-multiplot(p1 + theme(legend.position="none"),p2+ theme(legend.position="none"),p3+ theme(legend.position="none"),p4+ theme(legend.position="none"),p5+ theme(legend.position="none"),p6+ theme(legend.position="none"),p7+ theme(legend.position="none"),p8+ theme(legend.position="none"),p9+ theme(legend.position="none"),p10+ theme(legend.position="none"),p11+ theme(legend.position="none"),p12+ theme(legend.position="none"),cols=4)
+multiplot(p1 + theme(legend.position="none"),p2+ theme(legend.position="none"),p3+ theme(legend.position="none"),p4+ theme(legend.position="none"),p5+ theme(legend.position="none"),p6+ theme(legend.position="none"),p7+ theme(legend.position="none"),p8+ theme(legend.position="none"),p9+ theme(legend.position="none"),p10+ theme(legend.position="none"),p11+ theme(legend.position="none"),p12+ theme(legend.position="none"), p1,cols=5)
+#multiplot(p1 ,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,cols=4)
 dev.off()
