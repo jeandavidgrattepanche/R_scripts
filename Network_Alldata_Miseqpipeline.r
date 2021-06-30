@@ -5,7 +5,6 @@ library('phyloseqCompanion')
 library("ggplot2")
 library("plyr")
 library(stringr)
-#library(factoextra)
 source('/home/tuk61790/HPCr/multiplot.R', chdir = TRUE)
 source('/home/tuk61790/HPCr/get_top_taxa.R', chdir = TRUE)
 
@@ -17,6 +16,10 @@ envdata = sample_data(env.all)
 testb <- as.matrix(data.all[c(0:15)])
 TAX <- tax_table(testb)
 physeq <- phyloseq(mytable, envdata, TAX)
+
+#subsample to reduce the number of OTU (crash R on the server, useful for test)
+physeq.mil <- get_top_taxa(physeq, 1500, relative = FALSE, discard_other= TRUE, other_label="Other")
+
 
 #convert abundance in percentage:
 physeq.perc = transform_sample_counts(physeq, function(x) 100 * x/sum(x))
@@ -35,71 +38,30 @@ sample_data(physeq.group)$L <- mapply(paste0, as.character(renam[,2]))
 sample_data(physeq.group)$S <- mapply(paste0, as.character(renam[,3]))
 
 
-# testing: 
+# select taxa group: 
 print("select taxa")
 physeq.sp <- tax_glom(physeq.group, taxrank="Bsp", NArm = FALSE) 
 
 datatorun <- physeq.sp
 
-#create PCoA plot for each size fraction, using 3 classical diversity indices. size can be replace by another varaible
+#create network plot for each size fraction. size can be replace by another varaible
 sizes <- c("micro","nano","pico")
-indices <- c("jaccard","bray","chao") #"bray","cao","raup","chisq"
+Group <- c("other","northern","southern","offshore")
+ind <- "jaccard" 
 list <- list()
 i = 0
-for(ind in indices){
+for(G in Group){
 	for(sizedata in sizes){
 		i = i + 1
-		named <- paste(ind,sizedata,sep = "-")
+		named <- paste(G,sizedata,sep = "-")
 		print(named)
-		PCoAm <- ordinate(subset_samples(datatorun, S == sizedata), "PCoA", distance = ind)
-		ordplotPm <- plot_ordination(subset_samples(datatorun, S == sizedata), PCoAm, color="G", shape="L",label="G",title=named)
-		ordplotPmplus <- ordplotPm + geom_point(size=2)
+		network <- make_network(subset_samples(datatorun, S == sizedata), type="taxa", distance = ind, max.dist = 0.3, keep.isolates=FALSE)
+		ordplotPm <- plot_network(network, subset_samples(datatorun, S == sizedata), type ="taxa", color="class", shape="Btaxo_rank2",title=named)
 		assign(paste("p",i,sep=""), ordplotPm)
 		list[[length(list)+1]] <- paste("p",i,sep="")
 		plot(get(paste("p",i,sep="")))
 	}
 }
-pdf('PCoAs_Bsp_test15m.pdf')
+pdf('Network_size_group.pdf')
 multiplot(p1 + theme(legend.position="none"),p2+ theme(legend.position="none"),p3+ theme(legend.position="none"),p4+ theme(legend.position="none"),p5+ theme(legend.position="none"),p6+ theme(legend.position="none"),p7+ theme(legend.position="none"),p8+ theme(legend.position="none"),p9+ theme(legend.position="none"),cols=3)
 dev.off()
-
-# same as above for presence absence data
-#indices <- c("bray","jaccard","raup")#,"chisq"
-#list <- list()
-#i = 0
-#for(ind in indices){
-#	for(sizedata in sizes){
-#		i = i + 1
-#		named <- paste(ind,sizedata,sep = "-")
-#		print(named)
-#		PCoAm <- ordinate(subset_samples(physeq_pa, size == sizedata), "PCoA", distance = ind)
-#		ordplotPm <- plot_ordination(subset_samples(physeq_pa, size == sizedata), PCoAm, color="Group", shape="layer",label="station",title=named)
-#		ordplotPmplus <- ordplotPm + geom_point(size=3)
-#		assign(paste("p",i,sep=""), ordplotPm)
-#		list[[length(list)+1]] <- paste("p",i,sep="")
-#		plot(get(paste("p",i,sep="")))
-#	}
-#}
-#pdf('PCoAs_pa.pdf')
-#multiplot(p1,p2,p3,p4,p5,p6,p7,p8,p9,cols=3)
-#dev.off()
-
-#NMDS plot ... some issue with creatign the merge plot
-#list <- list()
-#j = 0
-#for(sizedata in sizes){
-#	j = j + 1
-#	print(sizedata)
-#	ordMDS <- metaMDS(t(otu_table(subset_samples(physeq, size == sizedata))))
-#	ordMDS.fit <- envfit(ordMDS ~ Chla + Babun + bottom + ice + airT + ZML_T + ZML_TS + ZML_TSP + Ze + ZCM + depth + water_temp + conductivity + salinity + oxygen + O_saturation + fluorescence + beam_trans + PAR + surf_PAR + Bprod, data=sample.data.table(subset_samples(physeq, size == sizedata)), perm=999, na.rm = TRUE)
-#	part123 <- c(plot(ordMDS, dis="site") , plot(ordMDS.fit) , text(ordMDS, display="sites"))
-#	qa <- plot(ordMDS, dis="site")
-#	qb <- plot(ordMDS.fit)
-#	qc <- text(ordMDS, display="sites")
-#	assign(paste("q",j,"a",sep=""), qa)
-#	assign(paste("q",j,"b",sep=""), qb)
-#	assign(paste("q",j,"c",sep=""), qc)
-#}
-#pdf('NMDS_2.pdf')
-#multiplot(q1a,q1b,q1c,q2a,q2b,q2c,q3a,q3b,q3c, cols=3) #,q4,q5,q6,q7,q8,q9,cols=3)
-#dev.off()
