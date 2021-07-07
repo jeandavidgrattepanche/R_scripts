@@ -21,37 +21,59 @@ physeq <- phyloseq(mytable, envdata, TAX)
 #convert abundance in percentage:
 physeq.perc = transform_sample_counts(physeq, function(x) 100 * x/sum(x))
 
-#reduce the number of OTU based on abundance (1e-05 here)
+#reduce the number of OTU based on variance (1e-05 here)
 physeq.red <- filter_taxa(physeq.perc, function(x) var(x) > 1e-05, TRUE)
 
-datatorun <- physeq.red
+scaled_data <- as(t(otu_table(physeq.red)),"matrix")
 # S or size, G or Group
 
-km = kmeans(as(t(otu_table(physeq.red)),"matrix"), centers= 5)
+km = kmeans(scaled_data, centers= 5)
 
-pt = multipatt(as(t(otu_table(physeq.red)),"matrix"), km$cluster, control = how(nperm=999))
+pt = multipatt(scaled_data, km$cluster, control = how(nperm=999))
 
 cat("indval_km",capture.output(summary(pt, indvalcomp=TRUE)),file="results_km_indval.txt",sep="\t")
 
-// #create network plot for each size fraction. size can be replace by another varaible
-// sizes <- c("micro","nano","pico")
-// Groups <- c("other","northern","southern","offshore")
-// ind <- "jaccard" 
-// list <- list()
-// i = 0
-// for(Gp in Groups){
-// 	for(sizedata in sizes){
-// 		i = i + 1
-// 		named <- paste(Gp,sizedata,sep = "-")
-// 		print(named)
-// 		network <- make_network(subset_samples(subset_samples(datatorun, size == sizedata), Group == Gp), type="taxa", distance = ind, max.dist = 0.3, keep.isolates=FALSE)
-// 		ordplotPm <- plot_network(network, subset_samples(subset_samples(datatorun, size == sizedata), Group == Gp), type ="taxa", color="Btaxo_rank4", label=NULL ,title=named)
-// 		assign(paste("p",i,sep=""), ordplotPm)
-// 		list[[length(list)+1]] <- paste("p",i,sep="")
-// 		plot(get(paste("p",i,sep="")))
-// 	}
-// }
-// pdf('Network_size_group.pdf')
-// multiplot(p1 + theme(legend.position="none"),p2+ theme(legend.position="none"),p3+ theme(legend.position="none"),p4+ theme(legend.position="none"),p5+ theme(legend.position="none"),p6+ theme(legend.position="none"),p7+ theme(legend.position="none"),p8+ theme(legend.position="none"),p9+ theme(legend.position="none"),p10+ theme(legend.position="none"),p11+ theme(legend.position="none"),p12+ theme(legend.position="none"), p1,cols=6)
-// #multiplot(p1 ,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,cols=4)
-// dev.off()
+library(factoextra)
+library(cluster)
+library(tidyverse)
+
+tot_withinss <- map_dbl(1:20, function(k) {
+	model <- kmeans(as(t(otu_table(physeq.red)),"matrix"), centers = k)
+	model$tot.withinss
+})
+
+bothkw <- data.frame( k = 1:20, tot_withinss = tot_withinss)
+
+pdf("kmeans_Elbow.pdf")
+ggplot(bothkw, aes(x = k, y = tot_withinss)) + 
+	geom_line() + geom_point() + scale_x_continuous(breaks= 1:20)
+dev.off()
+
+
+set.seed(123)
+gap_stat <- clusGap(as(t(otu_table(physeq.red)),"matrix"), FUN = kmeans, nstart = 25, K.max = 20, B = 50)
+
+pdf("kmeans_gap.pdf")
+fviz_gap_stat(gap_stat)
+dev.off()
+
+library(factoextra)
+library(NbClust)
+# Elbow method
+plEl <- fviz_nbclust(scaled_data, kmeans, method = "wss") +
+  geom_vline(xintercept = 2, linetype = 2)+
+  labs(subtitle = "Elbow method")
+# Silhouette method
+plSil <- fviz_nbclust(scaled_data, kmeans, method = "silhouette")+
+  labs(subtitle = "Silhouette method")
+# Gap statistic
+# nboot = 50 to keep the function speedy. 
+# recommended value: nboot= 500 for your analysis.
+# Use verbose = FALSE to hide computing progression.
+set.seed(123)
+plGap <- fviz_nbclust(scaled_data, kmeans, nstart = 25,  method = "gap_stat", nboot = 50)+
+  labs(subtitle = "Gap statistic method")
+
+pdf('kmeans_selection.pdf')
+multiplot(plEl,plSil,plGap,cols=1)
+dev.off()
