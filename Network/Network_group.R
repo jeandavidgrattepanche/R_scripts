@@ -47,24 +47,31 @@ plot(netplot2)
 dev.off()
 
 MB <-subset_samples(physeq.group.Hell, group=="4")
-MBc <- prune_taxa(taxa_sums(MB) > 0.0, MB)
+MBc <- prune_taxa(taxa_sums(MB) > 0.05, MB)
 MB2 <-subset_samples(physeq.group, group=="4")
 MBred <- prune_taxa(taxa_sums(MB2) > 100.0, MB2)
-MBred.Hell = transform_sample_counts(MBred, function(x) sqrt(x /sum(x)))
+MBred.Hell = transform_sample_counts(MBred, function(x) sqrt(x /sum(x))) # not sure transformation appropriate here
 
 GS2 <-subset_samples(physeq.group, group=="1")
 GSred <- prune_taxa(taxa_sums(GS2) > 100.0, GS2)
-GSred.Hell = transform_sample_counts(GSred, function(x) sqrt(x /sum(x)))
+GSred.Hell = transform_sample_counts(GSred, function(x) sqrt(x /sum(x))) # not sure transformation appropriate here
 
 
 
-network3 <- make_network(MBc, type="taxa",distance="jaccard",max.dist= 0.15)
-netplot3 <- plot_network(network3, MBc, type="taxa",color="Trophic")
-pdf("results_2/nettaxa_MB.pdf",width=13, height=8)
+network3h <- make_network(MBc, type="taxa",distance="jaccard",max.dist= 0.15)
+netplot3h <- plot_network(network3h, MBc, type="taxa",color="Trophic")
+pdf("results_2/nettaxa_MB.Hell.pdf",width=13, height=8)
+plot(netplot3h)
+dev.off()
+
+
+network3 <- make_network(MBred, type="taxa",distance="jaccard",max.dist= 0.3)
+netplot3 <- plot_network(network3, MBred, type="taxa",color="Trophic")
+pdf("results_2/nettaxa_MB2.pdf",width=13, height=8)
 plot(netplot3)
 dev.off()
-network4 <- make_network(GSred, type="taxa",distance="jaccard",max.dist= 0.2)
+network4 <- make_network(GSred, type="taxa",distance="jaccard",max.dist= 0.4)
 netplot4 <- plot_network(network4, MBc, type="taxa",color="Trophic")
-pdf("results_2/nettaxa_GS.pdf",width=13, height=8)
+pdf("results_2/nettaxa_GS2.pdf",width=13, height=8)
 plot(netplot4)
 dev.off()
