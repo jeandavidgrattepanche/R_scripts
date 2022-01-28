@@ -33,6 +33,14 @@ physeq.group.Hell = transform_sample_counts(physeq.group, function(x) sqrt(x /su
 #norare <- filter_taxa(physeq.group.Hell, function(x) sum(x>0.005) > (0.25*length(x)), TRUE)
 MB <-subset_samples(physeq.group.Hell, group=="4")
 MBc <- prune_taxa(taxa_sums(MB) > 0.0, MB)
+MB2 <-subset_samples(physeq.group, group=="4")
+MBred <- prune_taxa(taxa_sums(MB2) > 100.0, MB2)
+MBred.Hell = transform_sample_counts(MBred, function(x) sqrt(x /sum(x)))
+
+GS2 <-subset_samples(physeq.group, group=="1")
+GSred <- prune_taxa(taxa_sums(GS2) > 100.0, GS2)
+GSred.Hell = transform_sample_counts(GSred, function(x) sqrt(x /sum(x)))
+
 
 network <- make_network(MBc, type="samples")
 
