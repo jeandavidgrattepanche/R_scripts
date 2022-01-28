@@ -75,3 +75,32 @@ netplot4 <- plot_network(network4, MBc, type="taxa",color="Trophic")
 pdf("results_2/nettaxa_GS2.pdf",width=13, height=8)
 plot(netplot4)
 dev.off()
+
+
+### other network
+library(cooccur)
+library(visNetwork)
+library(igraph)
+datExpr0 = as.data.frame(t(otu_table(MBc)))
+datExpr0[] <- lapply(datExpr0, as.numeric)
+annot = as.data.frame((cbind(data.all[c(0:10)])))
+env.r = as.data.frame(sample_data(MBc))
+
+gsg = goodSamplesGenes(datExpr0, verbose = 3)
+gsg$allOK
+
+datExpr1 <- ((datExpr0>0) *1L)
+co <- cooccur(datExpr1, spp_names = TRUE)
+cox <- print(co)
+cox[,"sp1_name"] == rownames(datExpr1)[cox$sp1]
+cox[,"sp2_name"] == rownames(datExpr1)[cox$sp2]
+nodes <- data.frame(id = 1:nrow(datExpr1), label = rownames(datExpr1), color = "#606482", shadow= FALSE, size=rowSums(datExpr1))
+edges <- data.frame(from=cox$sp1, to = cox$sp2, color = ifelse(cox$p_lt <= 0.05, "red", "#3C3F51"), dashes = ifelse(cox$p_lt <= 0.05, TRUE, FALSE), weight = cox$p_lt)
+
+G <- graph_from_data_frame(d=edges, vertices = nodes, directed= TRUE)
+#deg <- degree(G, mode="all")
+#V(G)$size <- deg*3
+
+pdf("results_2/test_network_v2.pdf" , width=20, height=20)
+plot(G, vertex.size=1, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0.1)
+dev.off()
