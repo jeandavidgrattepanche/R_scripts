@@ -31,6 +31,21 @@ physeq.group <- merge_samples(physeq, "StLay")
 physeq.group.Hell = transform_sample_counts(physeq.group, function(x) sqrt(x /sum(x)))   
 
 #norare <- filter_taxa(physeq.group.Hell, function(x) sum(x>0.005) > (0.25*length(x)), TRUE)
+#all 0.45, MB 0.15, StLay 0.32
+
+#network after Hellinger transformation (better than just % or relative abundance) for samples and taxa using all samples
+network1 <- make_network(physeq.group.Hell, type="taxa",distance="jaccard",max.dist= 0.32)
+netplot1 <- plot_network(network1, physeq.group.Hell, type="taxa",color="Trophic")
+pdf("results_2/nettaxa_StLay.pdf",width=13, height=8)
+plot(netplot1)
+dev.off()
+
+network2 <- make_network(physeq.group.Hell, type="samples", max.dist= 0.6)
+netplot2 <- plot_network(network2, physeq.group.Hell, color="station")
+pdf("results_2/netsamples_StLay.pdf",width=13, height=8)
+plot(netplot2)
+dev.off()
+
 MB <-subset_samples(physeq.group.Hell, group=="4")
 MBc <- prune_taxa(taxa_sums(MB) > 0.0, MB)
 MB2 <-subset_samples(physeq.group, group=="4")
@@ -42,21 +57,14 @@ GSred <- prune_taxa(taxa_sums(GS2) > 100.0, GS2)
 GSred.Hell = transform_sample_counts(GSred, function(x) sqrt(x /sum(x)))
 
 
-network <- make_network(MBc, type="samples")
 
-network2 <- make_network(MBc, type="taxa",distance="jaccard",max.dist= 0.15)
-netplot <- plot_network(network2, MBc, type="taxa",color="Trophic")
+network3 <- make_network(MBc, type="taxa",distance="jaccard",max.dist= 0.15)
+netplot3 <- plot_network(network3, MBc, type="taxa",color="Trophic")
 pdf("results_2/nettaxa_MB.pdf",width=13, height=8)
-plot(netplot)
+plot(netplot3)
 dev.off()
-#all 0.45, MB 0.15, StLay 0.32
-network2 <- make_network(physeq.group.Hell, type="taxa",distance="jaccard",max.dist= 0.32)
-netplot <- plot_network(network2, physeq.group.Hell, type="taxa",color="Trophic")
-pdf("results_2/nettaxa_StLay.pdf",width=13, height=8)
-plot(netplot)
-dev.off()
-network2 <- make_network(physeq.group.Hell, type="samples", max.dist= 0.6)
-netplot <- plot_network(network2, physeq.group.Hell, color="station")
-pdf("results_2/netsamples_StLay.pdf",width=13, height=8)
-plot(netplot)
+network4 <- make_network(GSred, type="taxa",distance="jaccard",max.dist= 0.2)
+netplot4 <- plot_network(network4, MBc, type="taxa",color="Trophic")
+pdf("results_2/nettaxa_GS.pdf",width=13, height=8)
+plot(netplot4)
 dev.off()
