@@ -90,7 +90,7 @@ gsg = goodSamplesGenes(datExpr0, verbose = 3)
 gsg$allOK
 
 datExpr1 <- ((datExpr0>0) *1L)
-co <- cooccur(datExpr1, spp_names = TRUE)
+co <- cooccur(datExpr1, spp_names = TRUE) #can take awhile if correctly done on OTUs even if only a few OTUs
 cox <- print(co)
 cox[,"sp1_name"] == rownames(datExpr1)[cox$sp1]
 cox[,"sp2_name"] == rownames(datExpr1)[cox$sp2]
@@ -103,4 +103,18 @@ G <- graph_from_data_frame(d=edges, vertices = nodes, directed= TRUE)
 
 pdf("results_2/test_network_v2.pdf" , width=20, height=20)
 plot(G, vertex.size=1, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0.1)
+dev.off()
+
+Isolated = which(degree(G)==0)
+G2 = delete.vertices(G,Isolated)
+LO2 = layout_with_fr(G)[-Isolated,]
+pdf("results_2/test_network_v2.2.pdf", width=20, height=20)
+plot(G2, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0.1, vertex.size=1, layout=LO2)
+dev.off()
+
+toremove = which(E(G2)$color == "poor")
+G3 = delete.edges(G2,toremove)
+LO3 = layout_with_fr(G2)[-toremove,]
+pdf("results_2/test_network_v2.3.pdf")
+plot(G3, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0)
 dev.off()
