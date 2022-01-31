@@ -127,56 +127,43 @@ library(igraph)
 #datExpr0 = as.matrix(cbind(data.all[c(0)],data.all[c(16:111)]))
 #datExpr0[] <- lapply(datExpr0, as.numeric)
 MB <-subset_samples(physeq.group.Hell, group=="4")
-MBc <- prune_taxa(taxa_sums(MB) > 0.25, MB)
+MBc <- prune_taxa(taxa_sums(MB) > 0.1, MB)
 #0.05 -> 882
 #0.1 -> 481
 #0.25 -> 105
 datExpr3 = as.matrix((otu_table(MBc)))
-#datExpr3[] <- lapply(datExpr3, as.numeric)
-#datExpr0 = t(datExpr3)
-#shortlist = datExpr0[0:30,0:10]
-#shortlist=datExpr0[ rowSums(datExpr0) >= 100, ]
-#renamesd <- c(gsub("[.]", "-", names(shortlist)))
-#names(shortlist) <- renamesd
 
 corr <- rcorr((datExpr3), type="spearman")
 corr.pval <- forceSymmetric(corr$P)
 #tax <- tax_table(norare)
-testbc <- data.all[c(0:10)]
-sel.taxa <- testbc[rownames(corr.pval),, drop=FALSE]
-all.equal(rownames(sel.taxa), rownames(corr.pval))
-## should be TRUE to continue
 
 # pvalue cut off 0.001
-p.ok <- corr.pval < 0.001
+p.ok <- corr.pval < 0.001 #identify OTUs couple with an ok pvalue
 r.val = corr$r
-p.ok.rval <- r.val*p.ok
+p.ok.rval <- r.val*p.ok #extract rvalue for identify OTUs couple with an ok pvalue
 
 #r cut off 0.75
-p.ok.r.sel <- abs(p.ok.rval)>0.85
-p.ok.rval.sel <- p.ok.r.sel*r.val
-###try with only + and oly -
-pp.ok.r.sel <- (p.ok.rval)>0.85
-np.ok.r.sel <- (p.ok.rval)<(-0.85)
-pp.ok.rval.sel <- pp.ok.r.sel*r.val
-np.ok.rval.sel <- np.ok.r.sel*r.val
+p.ok.r.sel <- abs(p.ok.rval)>0.85 #identify OTUs couple with an ok rvalue
+p.ok.rval.sel <- p.ok.r.sel*r.val #extract rvalue for identify OTUs couple with an ok rvalue
 
 #creat adjacency matrix
 adjm <- as.matrix(p.ok.rval.sel)
+
 net_grph=graph.adjacency(adjm, mode="undirected",weighted=TRUE,diag=FALSE)
 edgedt <- as_data_frame(net_grph, what="edges")
-testbc <- data.all[c(0,2:10)]
+testbc <- data.all[c(0,2:9)]
 sel.taxa2 <- testbc[rownames(p.ok.rval.sel),, drop=FALSE]
 sel.taxa2['name'] = rownames(sel.taxa2)
-sel.taxa2 <- sel.taxa2[,c(7,1,2,3,4,6,5)] #really important to have the rowname and the first column (also the name matching the edge dataframe) with the same OTU name to build the network
+sel.taxa2 <- sel.taxa2[,c(9,1,2,3,4,6,5,7,8)] #really important to have the rowname and the first column (also the name matching the edge dataframe) with the same OTU name to build the network
 net2 <- graph_from_data_frame(edgedt, sel.taxa2, directed=F)
-c("Klepto?", "Mixo", "mixo?", "Parasite", "Phagotroph", "Phototroph")
-c("Gray50","red",  "orange","purple","blue","forestgreen")
-c_scale <- c("red", "forestgreen", "blue","orange","pink","black", "Gray50", "white")
+#c("Klepto?", "Mixo", "mixo?", "Parasite", "Phagotroph", "Phototroph")
+#c("Gray50","red",  "orange","purple","blue","forestgreen")
 V(net2)$color <- ifelse(V(net2)$Trophic == "Klepto?","Gray50", ifelse(V(net2)$Trophic == "Mixo","red",ifelse(V(net2)$Trophic == "mixo?","orange",ifelse(V(net2)$Trophic == "Parasite","purple", ifelse(V(net2)$Trophic == "Phagotroph","blue", ifelse(V(net2)$Trophic == "Phototroph","forestgreen","black"))))))
-#V(net2)$color <- c_scale[V(net2)$Trophic]
-pdf("results_2/correlationnetwork_MBc_v2.pdf", width=15, height=15)
-plot(net2, vertex.size=4, edge.curved=F, edge.width=0.5, layout=layout.graphopt, edge.color=ifelse(edgew <(-0.95), "red", ifelse ( (-0.95) <  edgew & edgew<0, "darkorange", ifelse( 0<edgew & edgew<0.95, "forestgreen", ifelse ( edgew> 0.95, "blue","grey")))), vertex.label.cex=0.5, vertex.label.angle=0.5)
+bad.vs<-V(net2)[degree(net2) == 0]
+net2 <- delete.vertices(net2,bad.vs)
+edgew <- E(net2)$weight
+pdf("results_2/correlationnetwork_MBc_v2.pdf", width=20, height=20)
+plot(net2, vertex.size=log(V(net2)$readnumber)/2, edge.curved=F, edge.width=5, layout=layout.graphopt, edge.color=ifelse(edgew <(-0.9), "red", ifelse ( (-0.9) <=  edgew & edgew<=0, "darkorange", ifelse( 0<edgew & edgew<=0.9, "forestgreen", ifelse ( edgew> 0.9, "blue","grey")))), vertex.label.cex=0.5, vertex.label.angle=0.5)
 dev.off()
 #colnames(adjm) <- as.vector(sel.taxa$Genus.species)
 #rownames(adjm) <- as.vector(sel.taxa$Genus.species)
