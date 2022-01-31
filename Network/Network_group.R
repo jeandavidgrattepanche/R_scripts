@@ -165,9 +165,19 @@ np.ok.rval.sel <- np.ok.r.sel*r.val
 adjm <- as.matrix(p.ok.rval.sel)
 net_grph=graph.adjacency(adjm, mode="undirected",weighted=TRUE,diag=FALSE)
 edgedt <- as_data_frame(net_grph, what="edges")
-testbc <- data.all[c(0,2:7)]
+testbc <- data.all[c(0,2:10)]
 sel.taxa2 <- testbc[rownames(p.ok.rval.sel),, drop=FALSE]
+sel.taxa2['name'] = rownames(sel.taxa2)
+sel.taxa2 <- sel.taxa2[,c(7,1,2,3,4,6,5)] #really important to have the rowname and the first column (also the name matching the edge dataframe) with the same OTU name to build the network
 net2 <- graph_from_data_frame(edgedt, sel.taxa2, directed=F)
+c("Klepto?", "Mixo", "mixo?", "Parasite", "Phagotroph", "Phototroph")
+c("Gray50","red",  "orange","purple","blue","forestgreen")
+c_scale <- c("red", "forestgreen", "blue","orange","pink","black", "Gray50", "white")
+V(net2)$color <- ifelse(V(net2)$Trophic == "Klepto?","Gray50", ifelse(V(net2)$Trophic == "Mixo","red",ifelse(V(net2)$Trophic == "mixo?","orange",ifelse(V(net2)$Trophic == "Parasite","purple", ifelse(V(net2)$Trophic == "Phagotroph","blue", ifelse(V(net2)$Trophic == "Phototroph","forestgreen","black"))))))
+#V(net2)$color <- c_scale[V(net2)$Trophic]
+pdf("results_2/correlationnetwork_MBc_v2.pdf", width=15, height=15)
+plot(net2, vertex.size=4, edge.curved=F, edge.width=0.5, layout=layout.graphopt, edge.color=ifelse(edgew <(-0.95), "red", ifelse ( (-0.95) <  edgew & edgew<0, "darkorange", ifelse( 0<edgew & edgew<0.95, "forestgreen", ifelse ( edgew> 0.95, "blue","grey")))), vertex.label.cex=0.5, vertex.label.angle=0.5)
+dev.off()
 #colnames(adjm) <- as.vector(sel.taxa$Genus.species)
 #rownames(adjm) <- as.vector(sel.taxa$Genus.species)
 
