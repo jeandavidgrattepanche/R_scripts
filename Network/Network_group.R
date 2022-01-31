@@ -95,7 +95,7 @@ cox <- print(co)
 cox[,"sp1_name"] == rownames(datExpr1)[cox$sp1]
 cox[,"sp2_name"] == rownames(datExpr1)[cox$sp2]
 nodes <- data.frame(id = 1:nrow(datExpr1), label = rownames(datExpr1), color = "#606482", shadow= FALSE, size=rowSums(datExpr1))
-edges <- data.frame(from=cox$sp1, to = cox$sp2, color = ifelse(cox$p_lt <= 0.05, "red", "#3C3F51"), dashes = ifelse(cox$p_lt <= 0.05, TRUE, FALSE), weight = cox$p_lt)
+edges <- data.frame(from=cox$sp1, to = cox$sp2, color = ifelse(cox$p_lt <= 0.5, "red", "#3C3F51"), dashes = ifelse(cox$p_lt <= 0.05, TRUE, FALSE), weight = cox$p_lt)
 
 G <- graph_from_data_frame(d=edges, vertices = nodes, directed= TRUE)
 #deg <- degree(G, mode="all")
@@ -108,8 +108,8 @@ dev.off()
 Isolated = which(degree(G)==0)
 G2 = delete.vertices(G,Isolated)
 LO2 = layout_with_fr(G)[-Isolated,]
-pdf("results_2/test_network_v2.2.pdf", width=20, height=20)
-plot(G2, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0.1, vertex.size=1, layout=LO2)
+pdf("results_2/test_network_v2-sp.2.pdf", width=10, height=10)
+plot(G2, vertex.label.family="Helvetica",vertex.label.cex=0.5, edge.arrow.size=0.1, vertex.size=2, layout=LO2)
 dev.off()
 
 toremove = which(E(G2)$color == "poor")
@@ -117,4 +117,78 @@ G3 = delete.edges(G2,toremove)
 LO3 = layout_with_fr(G2)[-toremove,]
 pdf("results_2/test_network_v2.3.pdf")
 plot(G3, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0)
+dev.off()
+
+
+## correlation network:
+library(Hmisc)
+library(Matrix)
+library(igraph)
+#datExpr0 = as.matrix(cbind(data.all[c(0)],data.all[c(16:111)]))
+#datExpr0[] <- lapply(datExpr0, as.numeric)
+MB <-subset_samples(physeq.group.Hell, group=="4")
+MBc <- prune_taxa(taxa_sums(MB) > 0.25, MB)
+#0.05 -> 882
+#0.1 -> 481
+#0.25 -> 105
+datExpr3 = as.matrix((otu_table(MBc)))
+#datExpr3[] <- lapply(datExpr3, as.numeric)
+#datExpr0 = t(datExpr3)
+#shortlist = datExpr0[0:30,0:10]
+#shortlist=datExpr0[ rowSums(datExpr0) >= 100, ]
+#renamesd <- c(gsub("[.]", "-", names(shortlist)))
+#names(shortlist) <- renamesd
+
+corr <- rcorr((datExpr3), type="spearman")
+corr.pval <- forceSymmetric(corr$P)
+#tax <- tax_table(norare)
+testbc <- data.all[c(0:10)]
+sel.taxa <- testbc[rownames(corr.pval),, drop=FALSE]
+all.equal(rownames(sel.taxa), rownames(corr.pval))
+## should be TRUE to continue
+
+# pvalue cut off 0.001
+p.ok <- corr.pval < 0.001
+r.val = corr$r
+p.ok.rval <- r.val*p.ok
+
+#r cut off 0.75
+p.ok.r.sel <- abs(p.ok.rval)>0.85
+p.ok.rval.sel <- p.ok.r.sel*r.val
+###try with only + and oly -
+pp.ok.r.sel <- (p.ok.rval)>0.85
+np.ok.r.sel <- (p.ok.rval)<(-0.85)
+pp.ok.rval.sel <- pp.ok.r.sel*r.val
+np.ok.rval.sel <- np.ok.r.sel*r.val
+
+#creat adjacency matrix
+adjm <- as.matrix(p.ok.rval.sel)
+net_grph=graph.adjacency(adjm, mode="undirected",weighted=TRUE,diag=FALSE)
+edgedt <- as_data_frame(net_grph, what="edges")
+testbc <- data.all[c(0,2:7)]
+sel.taxa2 <- testbc[rownames(p.ok.rval.sel),, drop=FALSE]
+net2 <- graph_from_data_frame(edgedt, sel.taxa2, directed=F)
+#colnames(adjm) <- as.vector(sel.taxa$Genus.species)
+#rownames(adjm) <- as.vector(sel.taxa$Genus.species)
+
+
+#net grap with igraph
+net_grph=graph.adjacency(adjm, vertices=sel.taxa, mode="undirected",weighted=TRUE,diag=FALSE)
+edgew <- E(net_grph)$weight
+V(net_grph)$trophic <- as.vector(sel.taxa$Trophic)
+edgew2 <- (1+edgew)/2
+bad.vs<-V(net_grph)[degree(net_grph) == 0]
+net_grph <- delete.vertices(net_grph,bad.vs)
+pdf("results_2/correlationnetwork_MBc_0.85c.pdf", width=15, height=15)
+#layout=layout.reingold.tilford
+#layout=layout.fruchterman.reingold
+#vertex.size=2,
+plot(net_grph, vertex.size=2, vertex.frame.color="black", edge.curved=F, edge.width=0.5, layout=layout.graphopt, edge.color=ifelse(edgew <(-0.95), "red", ifelse ( (-0.95) <  edgew & edgew<0, "darkorange", ifelse( 0<edgew & edgew<0.95, "forestgreen", ifelse ( edgew> 0.95, "blue","grey")))), vertex.label.cex=0.5, vertex.label.angle=0.5)
+dev.off()
+
+c_scale <- colorRamp(c('red', 'forestgreen', 'blue'))
+
+E(net_grph)$color = apply(c_scale(edgew2), 1, function(x) rgb(x[1]/255,x[2]/255,x[3]/255))
+pdf("testWGCNA/correlationnetwork_SL100r_0.75c.pdf", width=20, height=20)
+plot(net_grph, vertex.size=2, vertex.frame.color="black", edge.curved=F, edge.width=abs(edgew), layout=layout.circle, vertex.label.cex=1)
 dev.off()
