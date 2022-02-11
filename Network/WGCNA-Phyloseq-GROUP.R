@@ -39,7 +39,7 @@ MB <-subset_samples(physeq.group.Hell, group=="4")
 MBc <- prune_taxa(taxa_sums(MB) > 0.0, MB)
 
 #datExpr0 = as.data.frame(t(otu_table(norare)))
-datExpr0 = as.data.frame(t(otu_table(MBc)))
+datExpr0 = as.data.frame((otu_table(MBc)))
 datExpr0[] <- lapply(datExpr0, as.numeric)
 annot = as.data.frame((cbind(data.all[c(0:10)])))
 env.r = as.data.frame(sample_data(MBc))
@@ -49,8 +49,8 @@ gsg$allOK
 
 #if TRUE continue
 
-sampleTree = hclust(dist(datExpr0), method = "ward.D2")
-pdf("results_2/sample_clust.pdf")
+sampleTree = hclust(dist((datExpr0)), method = "ward.D2")
+pdf("results/sample_clust.pdf")
 plot(sampleTree)
 dev.off()
 
@@ -61,7 +61,7 @@ dev.off()
 
 #env.sub <- as.data.frame(cbind(env.r$sample, env.r$latitude, env.r$longitude, env.r$time, env.r$bottom, env.r$depth, env.r$ZML_TS, env.r$Ze, env.r$ZCM, env.r$ice, env.r$air_temp, env.r$water_temp, env.r$conductivity, env.r$salinity, env.r$PAR, env.r$surf_PAR, env.r$oxygen, env.r$O_saturation, env.r$beam_trans, env.r$NH4, env.r$NO2NO3, env.r$PO4, env.r$fluorescence, env.r$Chla, env.r$Pprod_PAR, env.r$Babun, env.r$Bprod, env.r$Observed, env.r$Chao1, env.r$se.chao1, env.r$Shannon, env.r$picoDiversity, env.r$nanoDiversity, env.r$microDiversity))
 
-#env.sub <- as.data.frame(cbind(env.r$StLay,env.r$latitude, env.r$longitude, env.r$time, env.r$bottom, env.r$depth, env.r$ZML_TS, env.r$Ze, env.r$ZCM, env.r$ice, env.r$air_temp, env.r$water_temp, env.r$conductivity, env.r$salinity, env.r$PAR, env.r$surf_PAR, env.r$oxygen, env.r$O_saturation, env.r$beam_trans, env.r$NH4, env.r$NO2NO3, env.r$PO4, env.r$fluorescence, env.r$Chla, env.r$Pprod_PAR, env.r$Babun, env.r$Bprod, env.r$Observed, env.r$Chao1, env.r$se.chao1, env.r$Shannon, env.r$picoDiversity, env.r$nanoDiversity, env.r$microDiversity))
+env.sub <- as.data.frame(cbind(env.r$StLay,env.r$latitude, env.r$longitude, env.r$time, env.r$bottom, env.r$depth, env.r$ZML_TS, env.r$Ze, env.r$ZCM, env.r$ice, env.r$air_temp, env.r$water_temp, env.r$conductivity, env.r$salinity, env.r$PAR, env.r$surf_PAR, env.r$oxygen, env.r$O_saturation, env.r$beam_trans, env.r$NH4, env.r$NO2NO3, env.r$PO4, env.r$fluorescence, env.r$Chla, env.r$Pprod_PAR, env.r$Babun, env.r$Bprod, env.r$Observed, env.r$Chao1, env.r$se.chao1, env.r$Shannon, env.r$picoDiversity, env.r$nanoDiversity, env.r$microDiversity))
 
 rownames(env.sub) <- rownames(env.r)
 # readd size if needed
@@ -74,7 +74,7 @@ env.red[] <- lapply(env.red, as.numeric)
 env.reds <- scale(env.red)
 names(env.reds) <- names(env.red)
 traitColors = numbers2colors(env.reds, signed = TRUE)
-pdf("results_2/sample_clust2.pdf", width =15, height=9)
+pdf("results/sample_clust2.pdf", width =15, height=9)
 plotDendroAndColors(sampleTree, traitColors, groupLabels = names(env.reds))
 dev.off()
 
@@ -106,7 +106,7 @@ pdf("results/test_WGCNA_14clust_3_v2.pdf", width = 15, height= 9)
 plot(TaxaTree, xlab="", sub="", main="Tax clustering on TOM-based dissimilarity", labels = FALSE, hang = 0.04)
 dev.off()
 
-minModuleSize = 30
+minModuleSize = 50
 dynamicMods = cutreeDynamic(dendro = TaxaTree, distM = dissTOM, deepSplit = 2, pamRespectsDendro = FALSE, minClusterSize = minModuleSize)
 table(dynamicMods)
 dynamicColors = labels2colors(dynamicMods)
@@ -206,7 +206,7 @@ module = "darkturquoise"
 column = match(module, modNames)
 #if NA => colors not in the module list
 moduleTaxa = moduleColors==module
-pdf("testWGCNA/test_WGCNA_clust_5c.pdf")
+pdf("results/test_WGCNA_clust_5c.pdf")
 par(mfrow = c(1,1))
 verboseScatterplot(abs(TaxaModuleMembership[moduleTaxa, column]),abs(TaxaTraitSignificance[moduleTaxa, 1]), xlab = paste("Module Membership in", module, "module"), ylab = "Taxa significance for water Temp", main = paste("Module membership vs. Taxa significance\n"), cex.main = 1.2 , cex.lab = 1.2, cex.axis = 1.2, col = module) 
 dev.off()
@@ -214,7 +214,7 @@ dev.off()
 print("heat map done. Create a summary table\n")
 
 #probes2annot = match(names(datExpr0), annot$Bsp) # for SPtable
-probes2annot = match(names(datExpr0), rownames(annot)) # work for bot OTUtable and SPtable
+probes2annot = match(names(datExpr0), rownames(annot)) # work for both OTUtable and SPtable
 
 # if okay
 sum(is.na(probes2annot)) 
@@ -222,7 +222,7 @@ sum(is.na(probes2annot))
 
 print("merge Taxo and module")
 
-TaxaInfo0 = data.frame(Taxon = names(datExpr0), TaxaSymbol = rownames(annot)[probes2annot], LinkID = annot$Btaxo_rank3[probes2annot], moduleColor = moduleColors, TaxaTraitSignificance, GSPvalue)
+TaxaInfo0 = data.frame(Taxon = names(datExpr0), TaxaSymbol = rownames(annot)[probes2annot], LinkID = annot$ Genus.species[probes2annot], moduleColor = moduleColors, TaxaTraitSignificance, GSPvalue)
 
 modOrder = order(-abs(cor(MEs2, SST, use = "p")))
 print("rank Taxo and module")
@@ -237,113 +237,7 @@ for (mod in 1:ncol(TaxaModuleMembership))
 print("ranking done! saving the file")
 TaxaOrder = order(TaxaInfo0$moduleColor, -abs(TaxaInfo0$GS.water_t))
 TaxaInfo = TaxaInfo0[TaxaOrder,]
-write.csv(TaxaInfo, file = "testWGCNA/TaxaInfoc.csv")
-
-
-
-##network
-library(cooccur)
-library(visNetwork)
-library(igraph)
-datExpr1 <- t((datExpr0>0) *1L)
-co <- cooccur(datExpr1, spp_names = TRUE)
-cox <- print(co)
-cox[,"sp1_name"] == rownames(datExpr1)[cox$sp1]
-cox[,"sp2_name"] == rownames(datExpr1)[cox$sp2]
-nodes <- data.frame(id = 1:nrow(datExpr1), label = rownames(datExpr1), color = "#606482", shadow= FALSE, size=rowSums(datExpr1))
-edges <- data.frame(from=cox$sp1, to = cox$sp2, color = ifelse(cox$p_lt <= 0.05, "red", "#3C3F51"), dashes = ifelse(cox$p_lt <= 0.05, TRUE, FALSE), weight = cox$p_lt)
-
-#p <- visNetwork(nodes = nodes, edges= edges) %>% 
-#visIgraphLayout(layout = "layout_with_kk")
-
-
-G <- graph_from_data_frame(d=edges, vertices = nodes, directed= TRUE)
-#deg <- degree(G, mode="all")
-#V(G)$size <- deg*3
-
-pdf("testWGCNA/test_WGCNA_network_v2.pdf" , width=20, height=20)
-plot(G, vertex.size=1, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0.1)
-dev.off()
-
-Isolated = which(degree(G)==0)
-G2 = delete.vertices(G,Isolated)
-LO2 = layout_with_fr(G)[-Isolated,]
-pdf("testWGCNA/test_WGCNA_network2.pdf", width=20, height=20)
-plot(G2, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0.1, vertex.size=1, layout=LO2)
-dev.off()
-
-toremove = which(E(G2)$color == "poor")
-G3 = delete.edges(G2,toremove)
-LO3 = layout_with_fr(G2)[-toremove,]
-pdf("testWGCNA/test_WGCNA_network3.pdf")
-plot(G3, vertex.label.family="Helvetica",vertex.label.cex=0.2, edge.arrow.size=0)
-dev.off()
-
-
-
-
-## correlation network:
-library(Hmisc)
-library(Matrix)
-library(igraph)
-#datExpr0 = as.matrix(cbind(data.all[c(0)],data.all[c(16:111)]))
-#datExpr0[] <- lapply(datExpr0, as.numeric)
-datExpr3 = as.matrix((otu_table(physeq.group)))
-datExpr3[] <- lapply(datExpr3, as.numeric)
-datExpr0 = t(datExpr3)
-#shortlist = datExpr0[0:30,0:10]
-shortlist=datExpr0[ rowSums(datExpr0) >= 100, ]
-renamesd <- c(gsub("[.]", "-", names(shortlist)))
-names(shortlist) <- renamesd
-
-corr <- rcorr(t(shortlist), type="spearman")
-corr.pval <- forceSymmetric(corr$P)
-#tax <- tax_table(norare)
-testbc <- data.all[c(0:17)]
-sel.taxa <- testbc[rownames(corr.pval),, drop=FALSE]
-all.equal(rownames(sel.taxa), rownames(corr.pval))
-## should be TRUE to continue
-
-# pvalue cut off 0.001
-p.ok <- corr.pval < 0.001
-r.val = corr$r
-p.ok.rval <- r.val*p.ok
-
-#r cut off 0.75
-p.ok.r.sel <- abs(p.ok.rval)>0.85
-p.ok.rval.sel <- p.ok.r.sel*r.val
-###try with only + and oly -
-HERE
-pp.ok.r.sel <- (p.ok.rval)>0.85
-np.ok.r.sel <- (p.ok.rval)<(-0.85)
-pp.ok.rval.sel <- pp.ok.r.sel*r.val
-np.ok.rval.sel <- np.ok.r.sel*r.val
-
-#creat adjacency matrix
-adjm <- as.matrix(p.ok.rval.sel)
-colnames(adjm) <- as.vector(sel.taxa$Bsp)
-rownames(adjm) <- as.vector(sel.taxa$Bsp)
-
-#net grap with igraph
-net_grph=graph.adjacency(adjm, mode="undirected",weighted=TRUE,diag=FALSE)
-edgew <- E(net_grph)$weight
-edgew2 <- (1+edgew)/2
-bad.vs<-V(net_grph)[degree(net_grph) == 0]
-net_grph <- delete.vertices(net_grph,bad.vs)
-pdf("testWGCNA/correlationnetwork_SL100r_0.75c.pdf", width=20, height=20)
-#plot(net_grph, vertex.size=2, vertex.frame.color="black", edge.curved=F, edge.width=1.5, layout=layout.fruchterman.reingold, edge.color=ifelse(edgew <0, "red", "blue"), vertex.label.cex=0.5)
-
-#dev.off()
-
-plot(net_grph, vertex.size=2, vertex.frame.color="black", edge.curved=F, edge.width=0.5, layout=layout.reingold.tilford, edge.color=ifelse(edgew <(-0.9), "red", ifelse ( (-0.9) <  edgew & edgew<0, "darkorange", ifelse( 0<edgew & edgew<0.9, "forestgreen", ifelse ( edgew> 0.9, "blue","grey")))), vertex.label.cex=0.5, vertex.label.angle=0.5)
-dev.off()
-
-c_scale <- colorRamp(c('red', 'forestgreen', 'blue'))
-
-E(net_grph)$color = apply(c_scale(edgew2), 1, function(x) rgb(x[1]/255,x[2]/255,x[3]/255))  
-pdf("testWGCNA/correlationnetwork_SL100r_0.75c.pdf", width=20, height=20)
-plot(net_grph, vertex.size=2, vertex.frame.color="black", edge.curved=F, edge.width=abs(edgew), layout=layout.circle, vertex.label.cex=1)
-dev.off()
+write.csv(TaxaInfo, file = "results/TaxaInfoc.csv")
 
 
 
