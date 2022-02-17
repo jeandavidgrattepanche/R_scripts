@@ -18,10 +18,26 @@ TAX <- tax_table(testb)
 physeq <- phyloseq(mytable, envdata, TAX)
 
 Adonis.results = adonis(formula = distance(physeq, "jaccard") ~ size * goup * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
-cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results021722.txt", sep="/n", append=TRUE)
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results021722.txt", sep="\n", append=TRUE)
 
 #adonis2 for some parameters and their interaction (*)
 Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ size * group * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
-cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2_results021722.txt", sep="/n", append=TRUE)
+cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2_results021722.txt", sep="\n", append=TRUE)
+# try term= NULL or "margin" or "term"
+#tried mixing parameters
+Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ layer * latitude * size * group , data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2b_results021722.txt", sep="\n", append=TRUE)
+
+Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ group + layer + latitude + size  , data = as(sample_data(physeq), "data.frame"), permutations = 9999, by = "margin") 
+cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2bmargin2_results021722.txt", sep="\n", append=TRUE)
+
+Adonis3.results = adonis2(formula = distance(physeq, "jaccard") ~ longitude + latitude + time + bottom + depth + ZML_TS + Ze + ZCM + ice + air_temp + water_temp + conductivity + salinity + PAR + surf_PAR + oxygen + O_saturation + beam_trans + fluorescence , data = as(sample_data(physeq), "data.frame"), permutations = 9999, by = "margin") 
+cat("Adonis_results", capture.output(Adonis3.results), file="summary_of_Adonis_results_env.txt", sep="\n", append=TRUE)
+
+
+Adonis3.results = adonis2(formula = distance(physeq, "jaccard") ~ longitude + latitude + time + bottom + depth + ZML_TS + Ze + ZCM + ice + air_temp + water_temp + conductivity + salinity + PAR + surf_PAR + oxygen + O_saturation + beam_trans + NH4 + NO2NO3 + PO4 + fluorescence + Chla + Pprod_Sun + Pprod_PAR + Pprod_PAR_20 + Babun + Bprod, data = as(sample_data(physeq), "data.frame"), permutations = 9999, by = "margin") 
+cat("Adonis_results", capture.output(Adonis3.results), file="summary_of_Adonis_results_env.txt", sep="\n", append=TRUE)
+
 Adonis3.results = adonis2(formula = distance(physeq, "jaccard") ~ bottom * ice * airT * depth_m * size_num *  depSM * waterT1 * conductivity1 * oxygen1 *  fluorescence *  beamTrans * PAR1 *  latitude *  longitude * timeJ *  altM *  spar * salinity1 * oxygenSaturation * bprod * pprod_Sun * pprod_PAR, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
-cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="n", append=TRUE)
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="\n", append=TRUE)
+
