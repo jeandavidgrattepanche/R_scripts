@@ -1,0 +1,27 @@
+setwd('/home/tuk61790/Network/')
+library('ape')
+library('phytools')
+library('phyloseqCompanion')
+library("ggplot2")
+library("plyr")
+library(stringr)
+#library(factoextra)
+
+options(stringsAsFactors = FALSE)
+
+data.all <- read.table('OTUtable_ingroup_100.txt',sep="\t",header=TRUE,row.names=1)
+env.all <- read.table('NBP1910_envdata_v4.5.txt',sep="\t",header=TRUE,row.names=1)
+mytable = otu_table(cbind(data.all[c(0)],data.all[c(10:105)]), taxa_are_rows=TRUE,errorIfNULL=TRUE)
+envdata = sample_data(env.all)
+testb <- as.matrix(data.all[c(0:10)])
+TAX <- tax_table(testb)
+physeq <- phyloseq(mytable, envdata, TAX)
+
+Adonis.results = adonis(formula = distance(physeq, "jaccard") ~ size * goup * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results021722.txt", sep="/n", append=TRUE)
+
+#adonis2 for some parameters and their interaction (*)
+Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ size * group * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2_results021722.txt", sep="/n", append=TRUE)
+Adonis3.results = adonis2(formula = distance(physeq, "jaccard") ~ bottom * ice * airT * depth_m * size_num *  depSM * waterT1 * conductivity1 * oxygen1 *  fluorescence *  beamTrans * PAR1 *  latitude *  longitude * timeJ *  altM *  spar * salinity1 * oxygenSaturation * bprod * pprod_Sun * pprod_PAR, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="n", append=TRUE)
