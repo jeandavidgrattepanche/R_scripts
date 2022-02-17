@@ -82,3 +82,9 @@ ordMDS.fit
 #adonis for some parameters and their interaction (*)
 Adonis.results = adonis(formula = distance(physeq, "jaccard") ~ size * Group * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
 cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="n", append=TRUE)
+
+#adonis2 for some parameters and their interaction (*)
+Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ size * Group * latitude * layer, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="n", append=TRUE)
+Adonis3.results = adonis2(formula = distance(physeq, "jaccard") ~ bottom * ice * airT * depth_m * size_num *  depSM * waterT1 * conductivity1 * oxygen1 *  fluorescence *  beamTrans * PAR1 *  latitude *  longitude * timeJ *  altM *  spar * salinity1 * oxygenSaturation * bprod * pprod_Sun * pprod_PAR, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
+cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="n", append=TRUE)
