@@ -41,3 +41,14 @@ cat("Adonis_results", capture.output(Adonis3.results), file="summary_of_Adonis_r
 Adonis3.results = adonis2(formula = distance(physeq, "jaccard") ~ bottom * ice * airT * depth_m * size_num *  depSM * waterT1 * conductivity1 * oxygen1 *  fluorescence *  beamTrans * PAR1 *  latitude *  longitude * timeJ *  altM *  spar * salinity1 * oxygenSaturation * bprod * pprod_Sun * pprod_PAR, data = as(sample_data(physeq), "data.frame"), permutations = 9999) 
 cat("Adonis_results", capture.output(Adonis.results), file="summary_of_Adonis_results.txt", sep="\n", append=TRUE)
 
+#envfit for each parameters in my env_data table (+)
+ordMDS <- metaMDS(t(otu_table(physeq)))
+ordMDS.fit <- envfit(ordMDS ~ group + size + layer + longitude + latitude + time + bottom + depth + ZML_TS + Ze + ZCM + ice + air_temp + water_temp + conductivity + salinity + PAR + surf_PAR + oxygen + O_saturation + beam_trans + NH4 + NO2NO3 + PO4 + fluorescence + Chla + Pprod_Sun + Pprod_PAR + Pprod_PAR_20 + Babun + Bprod, data=sample.data.table(physeq), perm=999, na.rm = TRUE)
+pdf("envfit_1.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+cat("envfit_results", capture.output(ordMDS.fit), file="summary_of_envfit_results.txt", sep="\n", append=TRUE)
+
+need to look by size or grouping the size
