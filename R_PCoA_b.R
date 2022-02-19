@@ -57,3 +57,38 @@ dev.off()
 cat("envfit_results", capture.output(ordMDS.fit), file="summary_of_envfit_results_micro.txt", sep="\n", append=TRUE)
 
 need to look by size or grouping the size
+
+
+Test AICc script from https://github.com/kdyson/R_Scripts/blob/master/AICc_PERMANOVA.R
+
+
+setwd('/home/tuk61790/Network/')
+library('ape')
+library('phytools')
+library('phyloseqCompanion')
+library("ggplot2")
+library("plyr")
+library(stringr)
+library(gtools)
+#library(factoextra)
+
+options(stringsAsFactors = FALSE)
+
+data.all <- read.table('OTUtable_ingroup_100.txt',sep="\t",header=TRUE,row.names=1)
+env.all <- read.table('NBP1910_envdata_v4.5.txt',sep="\t",header=TRUE,row.names=1)
+mytable = otu_table(cbind(data.all[c(0)],data.all[c(10:105)]), taxa_are_rows=TRUE,errorIfNULL=TRUE)
+envdata = sample_data(env.all)
+testb <- as.matrix(data.all[c(0:10)])
+TAX <- tax_table(testb)
+physeq <- phyloseq(mytable, envdata, TAX)
+
+source('/home/tuk61790/Network/AICc_table_generation.R',chdir =TRUE)
+source('AICc_PERMANOVA.R',chdir=T)
+testvar <-c("group","size","layer","latitude")
+testvar2 <- permutations(4,4,testvar)
+AICc.table.Nvar(testvar2, matrix.char=distance(physeq,"jaccard"),perm=99,n.var=4,method="jaccard", df=as(sample_data(physeq),"data.frame"))
+
+env.var <- c("group","size","longitude","latitude","time","bottom","depth","ZML_TS","Ze","ZCM","ice","air_temp","water_temp","conductivity","salinity","PAR","surf_PAR","oxygen","O_saturation","beam_trans","fluorescence")
+env.var2 <- permutations(length(env.var),length(env.var),env.var)
+AICresults <- AICc.table.Nvar(env.var2, matrix.char=distance(physeq,"jaccard"),perm=999,n.var=21,method="jaccard", df=as(sample_data(physeq),"data.frame"))
+cat("AIC_results", capture.output(AICresults), file="summary_of_AIC_results.txt", sep="\n", append=TRUE)
