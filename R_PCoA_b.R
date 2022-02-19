@@ -91,4 +91,13 @@ AICc.table.Nvar(testvar2, matrix.char=distance(physeq,"jaccard"),perm=99,n.var=4
 env.var <- c("group","size","longitude","latitude","time","bottom","depth","ZML_TS","Ze","ZCM","ice","air_temp","water_temp","conductivity","salinity","PAR","surf_PAR","oxygen","O_saturation","beam_trans","fluorescence")
 env.var2 <- permutations(length(env.var),length(env.var),env.var)
 AICresults <- AICc.table.Nvar(env.var2, matrix.char=distance(physeq,"jaccard"),perm=999,n.var=21,method="jaccard", df=as(sample_data(physeq),"data.frame"))
-cat("AIC_results", capture.output(AICresults), file="summary_of_AIC_results.txt", sep="\n", append=TRUE)
+write.table(AICresults, file="AIC_Table.txt", append=TRUE, sep="\t")
+AICresults <- AICc.table.Nvar(env.var2, matrix.char=distance(physeq,"jaccard"),perm=999,n.var=1,method="jaccard", df=as(sample_data(physeq),"data.frame"))
+write.table(AICresults, file="AIC_Table.txt", append=TRUE, sep="\t")
+#select order based on AIC value (1=lowest and last= highest)
+
+use this order to run adonis
+Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ group + layer + latitude + size  , data = as(sample_data(physeq), "data.frame"), permutations = 9999, by = "margin") 
+cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2bmargin2_results021722.txt", sep="\n", append=TRUE)
+
+#should be repeat for each size fraction
