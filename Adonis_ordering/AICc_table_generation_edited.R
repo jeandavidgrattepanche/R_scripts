@@ -42,7 +42,7 @@ AICc.table.2var <- function(sig.vars, control.var.char = NULL, c.var = 0, matrix
 			)),
 			permutations = perm,
 			method = method,
-			by = "term",
+			by = "terms",
 			data = data
 		)
 		
@@ -120,7 +120,7 @@ AICc.table.Nvar <- function(sig.vars, control.var.char = NULL, c.var = 0, matrix
 			)),
 			permutations = perm,
 			method = method,
-			by = "term", #NULL,
+			by = "terms", #NULL,
 			data = df
 		)
 		
