@@ -36,8 +36,10 @@ env.var <- c("group","size","longitude","latitude","time","bottom","depth","ZML_
 AICresults <- AICc.table.all(env.var, matrix.char=distance(physeq,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(physeq),"data.frame"),comb.incl=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21))
 write.table(AICresults, file="AIC_Table.txt", append=FALSE, sep="\t")
 #select order based on AIC value (1=lowest and last= highest)
-
-use this order to run adonis
+#use version below to add 1 parameter at the time => need to edit script to add most significant paramters each time.=> need to close R and restart
+AICresults2 <- AICc.table.all(env.var, matrix.char=distance(physeq,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(physeq),"data.frame"),comb.incl=c(1), control.var.char = c("size + latitude"))
+write.table(AICresults2, file="AIC_Table2-3.txt", append=FALSE, sep="\t")
+#use this order to run adonis
 Adonis2.results = adonis2(formula = distance(physeq, "jaccard") ~ group + layer + latitude + size  , data = as(sample_data(physeq), "data.frame"), permutations = 9999, by = "Term") 
 cat("Adonis_results", capture.output(Adonis2.results), file="summary_of_Adonis2bmargin2_results021722.txt", sep="\n", append=TRUE)
 
