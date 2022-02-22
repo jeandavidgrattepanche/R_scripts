@@ -15,10 +15,10 @@ env.all <- read.table('NBP1910_envdata_v4.5.txt',sep="\t",header=TRUE,row.names=
 mytable = otu_table(cbind(data.all[c(0)],data.all[c(10:105)]), taxa_are_rows=TRUE,errorIfNULL=TRUE)
 #scale env data
 #mytable = otu_table(cbind(data.all[c(0)],data.frame(scale(data.all[c(10:105)]))), taxa_are_rows=TRUE,errorIfNULL=TRUE)
-env.all.sc <- data.frame(scale(env.all))
-env.all.sc["sample"] <- row.names(env.all)
-envdata = sample_data(env.all.sc)
-#envdata = sample_data(env.all)
+# env.all.sc <- data.frame(scale(env.all))
+# env.all.sc["sample"] <- row.names(env.all)
+# envdata = sample_data(env.all.sc)
+envdata = sample_data(env.all)
 testb <- as.matrix(data.all[c(0:10)])
 TAX <- tax_table(testb)
 physeq <- phyloseq(mytable, envdata, TAX)
@@ -121,4 +121,20 @@ conductivity  1   0.2094 0.02259  1.2514 0.2135
 Residual     25   4.1824 0.45126
 Total        32   9.2684 1.00000
 ---
-
+# rerun without B, D and bucket => missing nuts  
+N because not used
+physeqb = subset_samples(physeq, station != "B")
+physeqb = subset_samples(physeq, station != "D")
+physeqb = subset_samples(physeqb, layer != "Bucket")
+torun <- subset_samples(physeqb, size == "pico")
+env.var <- c("bottom" , "depth" , "ZML_TS" , "Ze" , "ZCM" , "ice" , "air_temp" , "water_temp" , "conductivity" , "salinity" , "PAR" , "surf_PAR" , "oxygen" , "O_saturation" , "beam_trans" , "NH4" , "NO2NO3" , "PO4" , "fluorescence" , "Chla" , "Pprod_Sun" , "Pprod_PAR" , "Babun" , "Bprod" , "picoDiversity" , "nanoDiversity")
+source('/home/tuk61790/Network/AICc_table_generation_edited.R',chdir =TRUE)
+source('AICc_PERMANOVA.R',chdir=T)
+AICresults.pico <- AICc.table.all(env.var, matrix.char=distance(torun,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1))
+write.table(AICresults.pico, file="AIC_Table_pico_BD.txt", append=T, sep="\t")
+env.var.pico <- c("bottom" , "depth" , "ZML_TS" , "Ze" , "ZCM" , "ice" , "air_temp" , "conductivity" , "salinity" , "PAR" , "surf_PAR" , "oxygen" , "O_saturation" , "beam_trans" , "NH4" , "PO4" , "fluorescence" ,  "Bprod" )
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1), control.var.char = c("NO2NO3 +  water_temp" ))
+write.table(AICresults.pico, file="AIC_Table_pico_BD.txt", append=T, sep="\t")
+env.var.pico <- c( "NO2NO3", "water_temp", "time", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1,2,3,4,5,6,7,8,9))
+write.table(AICresults.pico, file="AIC_Table_pico_BD2.txt", append=T, sep="\t")
