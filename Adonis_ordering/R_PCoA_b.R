@@ -140,15 +140,15 @@ AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jacc
 write.table(AICresults.pico, file="AIC_Table_pico_BD2.txt", append=T, sep="\t")
 
 env.var.pico <- c( "NO2NO3", "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom")
-AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(4,10))
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5))
 write.table(AICresults.pico, file="AIC_Table_pico_BD2.txt", append=T, sep="\t")
 
 torun <- subset_samples(physeqb, size == "nano")
 env.var.pico <- c( "NO2NO3", "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom", "fluorescence")
-AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(4,10))
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5))
 write.table(AICresults.pico, file="AIC_Table_nano_BD2.txt", append=T, sep="\t")
 
 torun <- subset_samples(physeqb, size == "micro")
 env.var.pico <- c( "NO2NO3", "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom", "fluorescence")
-AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(4,10))
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5))
 write.table(AICresults.pico, file="AIC_Table_micro_BD2.txt", append=T, sep="\t")
