@@ -124,7 +124,7 @@ Total        32   9.2684 1.00000
 # rerun without B, D and bucket => missing nuts  
 N because not used
 physeqb = subset_samples(physeq, station != "B")
-physeqb = subset_samples(physeq, station != "D")
+physeqb = subset_samples(physeqb, station != "D")
 physeqb = subset_samples(physeqb, layer != "Bucket")
 torun <- subset_samples(physeqb, size == "pico")
 env.var <- c("bottom" , "depth" , "ZML_TS" , "Ze" , "ZCM" , "ice" , "air_temp" , "water_temp" , "conductivity" , "salinity" , "PAR" , "surf_PAR" , "oxygen" , "O_saturation" , "beam_trans" , "NH4" , "NO2NO3" , "PO4" , "fluorescence" , "Chla" , "Pprod_Sun" , "Pprod_PAR" , "Babun" , "Bprod" , "picoDiversity" , "nanoDiversity")
@@ -138,3 +138,17 @@ write.table(AICresults.pico, file="AIC_Table_pico_BD.txt", append=T, sep="\t")
 env.var.pico <- c( "NO2NO3", "water_temp", "time", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen")
 AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1,2,3,4,5,6,7,8,9))
 write.table(AICresults.pico, file="AIC_Table_pico_BD2.txt", append=T, sep="\t")
+
+env.var.pico <- c( "NO2NO3", "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(4,10))
+write.table(AICresults.pico, file="AIC_Table_pico_BD2.txt", append=T, sep="\t")
+
+torun <- subset_samples(physeqb, size == "nano")
+env.var.pico <- c( "NO2NO3", "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom", "fluorescence")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(4,10))
+write.table(AICresults.pico, file="AIC_Table_nano_BD2.txt", append=T, sep="\t")
+
+torun <- subset_samples(physeqb, size == "micro")
+env.var.pico <- c( "NO2NO3", "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom", "fluorescence")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(4,10))
+write.table(AICresults.pico, file="AIC_Table_micro_BD2.txt", append=T, sep="\t")
