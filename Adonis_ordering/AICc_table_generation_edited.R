@@ -129,7 +129,8 @@ AICc.table.Nvar <- function(sig.vars, control.var.char = NULL, c.var = 0, matrix
 
 		varcomb.N.AICc[r,3] <- temp$`F`[1]
 		varcomb.N.AICc[r,4] <- temp$`Pr(>F)`[1]
-		varcomb.N.AICc$`Var Explnd`[r] <- temp$SumOfSqs[1] / temp$SumOfSqs[3]
+#		varcomb.N.AICc$`Var Explnd`[r] <- temp$SumOfSqs[1] / temp$SumOfSqs[3]
+		varcomb.N.AICc$`Var Explnd`[r] <- temp$SumOfSqs[1] / temp$SumOfSqs[length(temp$SumOfSqs)]
 		
 
 		r <- r + 1
