@@ -1,0 +1,41 @@
+setwd('/home/tuk61790/Network/')
+library('ape')
+library('phytools')
+library('phyloseqCompanion')
+library("ggplot2")
+library("plyr")
+library(gtools)
+library(stringr)
+#library(factoextra)
+
+options(stringsAsFactors = FALSE)
+source('/home/tuk61790/Network/AICc_table_generation_edited.R',chdir =TRUE)
+source('AICc_PERMANOVA.R',chdir=T)
+
+data.all <- read.table('OTUtable_ingroup_100.txt',sep="\t",header=TRUE,row.names=1)
+env.all <- read.table('NBP1910_envdata_v4.5.txt',sep="\t",header=TRUE,row.names=1)
+mytable = otu_table(cbind(data.all[c(0)],data.all[c(10:105)]), taxa_are_rows=TRUE,errorIfNULL=TRUE)
+envdata = sample_data(env.all)
+testb <- as.matrix(data.all[c(0:10)])
+TAX <- tax_table(testb)
+physeq <- phyloseq(mytable, envdata, TAX)
+physeq = transform_sample_counts(physeq, function(x) 100 * x/sum(x)) 
+pico <- subset_samples(physeq, size == "pico")
+nano <- subset_samples(physeq, size == "nano")
+micro <- subset_samples(physeq, size == "micro")
+
+
+
+env.var.pico <- c( "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5))
+write.table(AICresults.pico, file="AIC_Table_pico_BD2b.txt", append=T, sep="\t")
+
+torun <- subset_samples(physeqb, size == "nano")
+env.var.pico <- c(  "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom", "fluorescence")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5))
+write.table(AICresults.pico, file="AIC_Table_nano_BD2b.txt", append=T, sep="\t")
+
+torun <- subset_samples(physeqb, size == "micro")
+env.var.pico <- c(  "water_temp", "conductivity" , "Bprod", "ice", "depth", "ZML_TS", "oxygen", "beam_trans", "bottom", "fluorescence")
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5))
+write.table(AICresults.pico, file="AIC_Table_micro_BD2b.txt", append=T, sep="\t")
