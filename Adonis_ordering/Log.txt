@@ -158,3 +158,5 @@ write.table(AICresults.pico, file="AIC_Table_micro_BD2.txt", append=T, sep="\t")
 #other parameter highly related to latitude are selected => add latitude to remove this bias?
 #another run using latitude, nut, Bprod and other para => nut or Bprod drive the composition/diversity of each size fraction
 Rerun but scaling the data
+
+env.all.sc <- data.frame(cbind(env.all[c(0:7)],scale(env.all[c(8:41)]))) 
