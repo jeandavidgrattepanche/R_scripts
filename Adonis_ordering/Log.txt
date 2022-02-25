@@ -31,11 +31,11 @@ micro <- subset_samples(physeq, size == "micro")
 
 source('/home/tuk61790/Network/AICc_table_generation_edited.R',chdir =TRUE)
 source('AICc_PERMANOVA.R',chdir=T)
-#testvar <-c("group","size","layer","latitude")
+#testvar <-c("group+size+layer+latitude")
 #testvar2 <- permutations(4,4,testvar) => not working properly yet
 #AICc.table.Nvar(testvar2, matrix.char=distance(physeq,"jaccard"),perm=99,n.var=4,method="jaccard", df=as(sample_data(physeq),"data.frame"))
 
-env.var <- c("group","size","longitude","latitude","time","bottom","depth","ZML_TS","Ze","ZCM","ice","air_temp","water_temp","conductivity","salinity","PAR","surf_PAR","oxygen","O_saturation","beam_trans","fluorescence")
+env.var <- c("group+size+longitude+latitude+time+bottom+depth+ZML_TS+Ze+ZCM+ice+air_temp+water_temp+conductivity+salinity+PAR+surf_PAR+oxygen+O_saturation+beam_trans+fluorescence")
 #env.var2 <- permutations(length(env.var),length(env.var),env.var) #no role of order here so skipped
 #AICresults <- AICc.table.Nvar(env.var, matrix.char=distance(physeq,"jaccard"),perm=9999,n.var=21,method="jaccard", df=as(sample_data(physeq),"data.frame"))
 #write.table(AICresults, file="AIC_Table.txt", append=TRUE, sep="\t")
@@ -80,7 +80,7 @@ write.table(AICresults.nano, file="AIC_Table_nano.txt", append=T, sep="\t")
 
 # nano: Four parameters were important regarding the nanoplankton community: as for the microplankton, the nitrate/nitrite, then the time of sampling and the depth of the mixed layer have also played for the nanoplankton. In additon, the depth of sampling was also responsible of the nanoplankton composition. Additional parameters are not adding explanation to the variance. suggesting negligiable role.
 
-env.var.pico <- c("latitude","longitude","time" , "bottom" , "depth" , "ZML_TS" , "Ze" , "ZCM" , "ice" , "air_temp" , "water_temp" , "conductivity" , "salinity" , "PAR" , "surf_PAR" , "oxygen" , "O_saturation" , "beam_trans" , "NH4" , "NO2NO3" , "PO4" , "fluorescence" , "Chla" , "Pprod_Sun" , "Pprod_PAR" , "Babun" , "Bprod" , "nanoDiversity" ,  "microDiversity")
+env.var.pico <- c("latitude+longitude+time" , "bottom" , "depth" , "ZML_TS" , "Ze" , "ZCM" , "ice" , "air_temp" , "water_temp" , "conductivity" , "salinity" , "PAR" , "surf_PAR" , "oxygen" , "O_saturation" , "beam_trans" , "NH4" , "NO2NO3" , "PO4" , "fluorescence" , "Chla" , "Pprod_Sun" , "Pprod_PAR" , "Babun" , "Bprod" , "nanoDiversity" ,  "microDiversity")
 AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(pico,"jaccard"),perm=9999,method="jaccard", df=as(sample_data(pico),"data.frame"),comb.incl=c(1))
 write.table(AICresults.pico, file="AIC_Table_pico2.txt", append=T, sep="\t")
 
@@ -160,3 +160,14 @@ write.table(AICresults.pico, file="AIC_Table_micro_BD2.txt", append=T, sep="\t")
 Rerun but scaling the data
 
 env.all.sc <- data.frame(cbind(env.all[c(0:7)],scale(env.all[c(8:41)]))) 
+
+
+
+group+size+longitude+latitude+time+bottom+depth+ZML_TS+Ze+ZCM+ice+air_temp+water_temp+conductivity+salinity+PAR+surf_PAR+oxygen+O_saturation+beam_trans+fluorescence
+#look at VIF > 10=>bad ~4=>need to thik 1=> OK + Tolerance <0.1
+#look at index > 30=>bad 
+library(olsrr)
+model <- lm(NO2NO3 ~ latitude+group+longitude+NH4+PO4+Bprod+time+bottom+depth+ZML_TS+Ze+ZCM+ice+air_temp+water_temp+conductivity+salinity+PAR+surf_PAR+oxygen+O_saturation+beam_trans+fluorescence, data = as(sample_data(physeqb),"data.frame"))
+res = ols_coll_diag(model)
+#(ols_vif_tol(model)) for top part only
+cat("Collinearity", capture.output(res), file="CollinearityN.txt", sep="\n", append=F)
