@@ -31,15 +31,19 @@ physeqb = subset_samples(physeqb, layer != "Bucket")
 
 torun <- subset_samples(physeqb, size == "pico")
 env.var.pico <- c( "latitude", "salinity","NO2NO3","Chla","conductivity", "ZML_TS","beam_trans", "fluorescence", "Ze","oxygen" ,"water_temp",  "Bprod", "ice","NH4","O_saturation","depth","PO4", "bottom")
-AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5,6,7))
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1,2,3,4,5,6,7))
 write.table(AICresults.pico, file="AIC_Table_pico_scaled.txt", append=F, sep="\t")
 
 torun <- subset_samples(physeqb, size == "nano")
 env.var.pico <- c( "latitude","NO2NO3", "ice", "ZML_TS", "Chla", "oxygen", "NH4", "Ze", "fluorescence", "beam_trans", "PO4", "salinity", "bottom")
-AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5,6,7))
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1,2,3,4,5,6,7))
 write.table(AICresults.pico, file="AIC_Table_nano_scaled.txt", append=F, sep="\t")
 
 torun <- subset_samples(physeqb, size == "micro")
 env.var.pico <- c( "latitude","Ze", "NO2NO3","oxygen","ZML_TS","Chla", "fluorescence","beam_trans","Bprod","salinity","ice","conductivity", "O_saturation", "water_temp", "PO4", "NH4") 
-AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(3,4,5,6,7))
+AICresults.pico <- AICc.table.all(env.var.pico, matrix.char=distance(torun,"jaccard"),perm=999,method="jaccard", df=as(sample_data(torun),"data.frame"),comb.incl=c(1,2,3,4,5,6,7))
 write.table(AICresults.pico, file="AIC_Table_micro_scaled.txt", append=F, sep="\t")
+
+torun <- subset_samples(physeqb, size == "pico")
+Adonis2.results = adonis2(formula = distance(torun, "jaccard") ~ latitude + NO2NO3  , data = as(sample_data(torun), "data.frame"), permutations = 9999, by = "terms")
+cat("Adonis_results_pico", capture.output(Adonis2.results), file="Adonis2_results022522.txt", sep="\n", append=TRUE)
