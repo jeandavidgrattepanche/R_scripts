@@ -179,3 +179,232 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 Permutation: free
 Number of permutations: 999
 
+mixo <- subset_taxa(physeq, Trophic =="mixo?" | Trophic == "Mixo" | Trophic == "Klepto?")
+mixo = prune_samples(sample_sums(mixo) != 0, mixo)
+mixo = transform_sample_counts(mixo, function(x) 100 * x/sum(x)) 
+pico <- subset_samples(mixo, size == "pico")
+nano <- subset_samples(mixo, size == "nano")
+micro <- subset_samples(mixo, size == "micro")
+torun <- micro
+ordMDS <- metaMDS(t(otu_table(torun)), distance = "jaccard")
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_mixo_micro.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+ordMDS.fit
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)    
+Bprod        -0.55583  0.83129 0.4468  0.001 ***
+Pprod_PAR    -0.45534  0.89032 0.2549  0.012 *  
+ice          -0.28962 -0.95714 0.2708  0.007 ** 
+air_temp     -0.92790  0.37283 0.0693  0.332    
+depth         0.92944 -0.36898 0.1441  0.098 .  
+PAR          -0.81332  0.58181 0.1805  0.048 *  
+salinity      0.95637 -0.29216 0.0471  0.478    
+oxygen       -0.09575  0.99541 0.2617  0.011 *  
+O_saturation  0.48033 -0.87709 0.3512  0.004 ** 
+fluorescence -0.12169  0.99257 0.4658  0.001 ***
+beam_trans    0.33725 -0.94142 0.6316  0.001 ***
+water_temp   -0.49349  0.86975 0.4111  0.002 ** 
+conductivity -0.42467  0.90535 0.2407  0.020 *  
+NH4          -0.76359 -0.64570 0.3493  0.004 ** 
+NO2NO3       -0.15103 -0.98853 0.4513  0.001 ***
+PO4          -0.20168 -0.97945 0.1211  0.137    
+Chla         -0.24194  0.97029 0.6358  0.001 ***
+Chao1         0.88045  0.47414 0.4601  0.001 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+torun <- nano
+ordMDS <- metaMDS(t(otu_table(torun)), distance = "jaccard")
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_nano_micro.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+ordMDS.fit
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)    
+Bprod        -0.49137  0.87095 0.1513  0.106    
+Pprod_PAR    -0.20510  0.97874 0.1911  0.056 .  
+ice          -0.53511 -0.84478 0.4054  0.001 ***
+air_temp     -0.72611 -0.68758 0.1880  0.063 .  
+depth         0.57559 -0.81774 0.4509  0.001 ***
+PAR          -0.99890  0.04680 0.1030  0.224    
+salinity      0.21111 -0.97746 0.2100  0.054 .  
+oxygen        0.07500  0.99718 0.2499  0.019 *  
+O_saturation  0.86667  0.49887 0.0770  0.326    
+fluorescence  0.15438  0.98801 0.1288  0.181    
+beam_trans    0.61152 -0.79123 0.1489  0.133    
+water_temp   -0.97193 -0.23528 0.0864  0.281    
+conductivity -0.58715 -0.80948 0.0717  0.362    
+NH4          -0.99986  0.01666 0.1419  0.135    
+NO2NO3       -0.31359 -0.94956 0.4579  0.002 ** 
+PO4          -0.21459 -0.97670 0.4154  0.001 ***
+Chla         -0.18348  0.98302 0.1786  0.097 .  
+Chao1         0.15123  0.98850 0.2480  0.020 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+torun <- pico
+ordMDS <- metaMDS(t(otu_table(torun)), distance = "jaccard")
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_pico_micro.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+ordMDS.fit
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)    
+Bprod         0.15260 -0.98829 0.3712  0.004 ** 
+Pprod_PAR     0.08389 -0.99647 0.1985  0.048 *  
+ice           0.84559 -0.53383 0.0830  0.268    
+air_temp      0.83982  0.54286 0.2592  0.012 *  
+depth        -0.26560  0.96408 0.5631  0.001 ***
+PAR           0.99294  0.11860 0.1626  0.064 .  
+salinity      0.06979  0.99756 0.6947  0.001 ***
+oxygen       -0.11380 -0.99350 0.3350  0.006 ** 
+O_saturation -0.55461 -0.83211 0.4071  0.001 ***
+fluorescence -0.26800 -0.96342 0.0635  0.392    
+beam_trans   -0.66571  0.74621 0.1754  0.048 *  
+water_temp    0.65206  0.75817 0.3619  0.001 ***
+conductivity  0.42414  0.90560 0.4845  0.001 ***
+NH4           0.37415 -0.92737 0.1989  0.032 *  
+NO2NO3        0.34320  0.93926 0.4308  0.002 ** 
+PO4           0.30300  0.95299 0.1774  0.054 .  
+Chla          0.21898 -0.97573 0.1450  0.095 .  
+Chao1         0.09452  0.99552 0.0803  0.299    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+
+phago <- subset_taxa(physeq, Trophic =="phagotroph" | Trophic == "Phagotroph" )
+phago = prune_samples(sample_sums(phago) != 0, phago)
+phago = transform_sample_counts(phago, function(x) 100 * x/sum(x)) 
+pico <- subset_samples(phago, size == "pico")
+nano <- subset_samples(phago, size == "nano")
+micro <- subset_samples(phago, size == "micro")
+torun <- micro
+ordMDS <- metaMDS(t(otu_table(torun)), distance = "jaccard")
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_phago_micro.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+ordMDS.fit
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)   
+Bprod        -0.94667  0.32221 0.2599  0.010 **
+Pprod_PAR    -0.63706  0.77082 0.1531  0.077 . 
+ice          -0.26482 -0.96430 0.1451  0.110   
+air_temp     -0.82853 -0.55994 0.0620  0.384   
+depth         0.99861  0.05266 0.1872  0.041 * 
+PAR          -0.88594  0.46380 0.1463  0.084 . 
+salinity      0.98232 -0.18723 0.0640  0.331   
+oxygen       -0.70849  0.70572 0.0810  0.262   
+O_saturation  0.67922  0.73393 0.1170  0.162   
+fluorescence -0.74724  0.66456 0.0378  0.544   
+beam_trans    0.64723  0.76230 0.2249  0.014 * 
+water_temp   -0.70418 -0.71002 0.1465  0.091 . 
+conductivity -0.55408 -0.83246 0.0701  0.327   
+NH4          -0.99564  0.09326 0.2325  0.016 * 
+NO2NO3        0.06809 -0.99768 0.0955  0.203   
+PO4          -0.41244 -0.91098 0.0202  0.714   
+Chla         -0.98650 -0.16376 0.0880  0.256   
+Chao1         0.98159 -0.19099 0.2176  0.020 * 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+torun <- nano
+ordMDS <- metaMDS(t(otu_table(torun)), distance = "jaccard")
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_phago_nano.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+ordMDS.fit
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)   
+Bprod        -0.87167  0.49010 0.3129  0.004 **
+Pprod_PAR    -0.64386  0.76515 0.1840  0.069 . 
+ice          -0.24639 -0.96917 0.1372  0.158   
+air_temp     -0.37410 -0.92739 0.1202  0.163   
+depth         0.98629 -0.16504 0.2287  0.028 * 
+PAR          -0.86279  0.50556 0.1759  0.077 . 
+salinity      0.86134 -0.50803 0.1514  0.090 . 
+oxygen       -0.25760  0.96625 0.1424  0.135   
+O_saturation  0.90631  0.42262 0.1605  0.092 . 
+fluorescence -0.50040  0.86579 0.1461  0.131   
+beam_trans    0.99933  0.03649 0.2431  0.038 * 
+water_temp   -0.93522 -0.35407 0.2013  0.058 . 
+conductivity -0.78488 -0.61965 0.0899  0.250   
+NH4          -0.91988  0.39219 0.2061  0.051 . 
+NO2NO3        0.01034 -0.99995 0.2364  0.025 * 
+PO4          -0.06183 -0.99809 0.1608  0.094 . 
+Chla         -0.83048  0.55706 0.1773  0.075 . 
+Chao1         0.31405  0.94941 0.3101  0.008 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+torun <- pico
+ordMDS <- metaMDS(t(otu_table(torun)), distance = "jaccard")
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_phago_pico.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+ordMDS.fit
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)    
+Bprod        -0.79399 -0.60793 0.1728  0.070 .  
+Pprod_PAR    -0.93283 -0.36032 0.1544  0.087 .  
+ice          -0.31678 -0.94850 0.0584  0.410    
+air_temp     -0.56233  0.82691 0.1141  0.140    
+depth         0.63619  0.77153 0.2550  0.014 *  
+PAR          -0.96429 -0.26485 0.1271  0.106    
+salinity      0.35602  0.93448 0.1602  0.086 .  
+oxygen       -0.36031 -0.93283 0.0496  0.474    
+O_saturation  0.37576 -0.92672 0.3575  0.005 ** 
+fluorescence -0.73487  0.67820 0.0163  0.784    
+beam_trans    0.57360 -0.81913 0.2541  0.027 *  
+water_temp   -0.42131  0.90692 0.3753  0.004 ** 
+conductivity -0.27751  0.96072 0.3212  0.006 ** 
+NH4          -0.42335 -0.90596 0.3900  0.001 ***
+NO2NO3       -0.29684  0.95493 0.0260  0.689    
+PO4          -0.54798  0.83649 0.0210  0.749    
+Chla         -0.59554  0.80332 0.1339  0.144    
+Chao1         0.21598 -0.97640 0.0645  0.375    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+
+
