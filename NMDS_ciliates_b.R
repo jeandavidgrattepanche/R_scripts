@@ -246,3 +246,191 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 Permutation: free
 Number of permutations: 999
 
+cil <- subset_taxa(pico, T4 == "Cil")
+cil = prune_samples(sample_sums(cil) != 0, cil)
+cil = transform_sample_counts(cil, function(x) 100 * x/sum(x)) 
+
+torun <- cil
+dUNIFRAC = UniFrac(torun, weighted=TRUE, normalized=TRUE, fast=TRUE)
+ordMDS <- metaMDS(t(otu_table(torun)), comm = dUNIFRAC)
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_PE_UnifracW_PicoCil.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+***VECTORS
+
+                  NMDS1      NMDS2     r2 Pr(>r)  
+Bprod        -0.0004174  1.0000000 0.0998  0.187  
+Pprod_PAR    -0.0006040  1.0000000 0.0972  0.183  
+ice           0.0002711 -1.0000000 0.0348  0.819  
+air_temp      0.0000304  1.0000000 0.0454  0.342  
+depth         0.0001869 -1.0000000 0.1844  0.043 *
+PAR          -0.0000803  1.0000000 0.2089  0.075 .
+salinity      0.0010819  1.0000000 0.0310  0.636  
+oxygen       -0.0006733  1.0000000 0.1062  0.200  
+O_saturation -0.0000237 -1.0000000 0.1400  0.134  
+fluorescence -0.0012768 -1.0000000 0.0308  0.616  
+beam_trans    0.0001270 -1.0000000 0.1290  0.124  
+water_temp    0.0000014  1.0000000 0.1486  0.112  
+conductivity  0.0000664  1.0000000 0.1152  0.173  
+NH4          -0.0182003  0.9998300 0.0514  0.440  
+NO2NO3        0.0066284  0.9999800 0.0472  0.592  
+PO4           0.0007161 -1.0000000 0.0510  0.477  
+Chla         -0.0002750  1.0000000 0.0896  0.178  
+Chao1        -0.0002976 -1.0000000 0.0159  0.805  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+
+dUNIFRAC = UniFrac(torun, weighted=FALSE, normalized=TRUE, fast=TRUE)
+ordMDS <- metaMDS(t(otu_table(torun)), comm = dUNIFRAC)
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_PE_UnifracUnW_PicoCil.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)    
+Bprod         0.37923 -0.92530 0.2351  0.029 *  
+Pprod_PAR     0.67641 -0.73652 0.0475  0.493    
+ice           0.99991 -0.01321 0.0704  0.361    
+air_temp      0.97011  0.24267 0.0897  0.256    
+depth        -0.26529  0.96417 0.4412  0.001 ***
+PAR           0.81213 -0.58347 0.1983  0.046 *  
+salinity     -0.17566  0.98445 0.1074  0.197    
+oxygen       -0.23930 -0.97095 0.1215  0.148    
+O_saturation -0.89803 -0.43994 0.2419  0.016 *  
+fluorescence -0.70350 -0.71069 0.0240  0.686    
+beam_trans   -0.91386  0.40602 0.1324  0.142    
+water_temp    0.94131  0.33756 0.2671  0.009 ** 
+conductivity  0.76531  0.64367 0.1950  0.037 *  
+NH4           0.55326 -0.83301 0.2651  0.008 ** 
+NO2NO3        0.59607  0.80293 0.1306  0.150    
+PO4           0.52874  0.84878 0.1344  0.122    
+Chla          0.77685 -0.62968 0.0576  0.410    
+Chao1        -0.37262 -0.92798 0.0046  0.945    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+Mam <- subset_taxa(physeq, T4 == "Mam")
+Mam = prune_samples(sample_sums(Mam) != 0, Mam)
+Mam = transform_sample_counts(Mam, function(x) 100 * x/sum(x)) 
+
+dUNIFRAC = UniFrac(torun, weighted=FALSE, normalized=TRUE, fast=TRUE)
+ordMDS <- metaMDS(t(otu_table(torun)), comm = dUNIFRAC)
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_PE_UnifracUnW_Mam.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)   
+Bprod        -0.76190  0.64769 0.0453  0.176   
+Pprod_PAR    -0.85660  0.51599 0.0319  0.316   
+ice           0.10446 -0.99453 0.1410  0.004 **
+air_temp     -0.01556 -0.99988 0.0740  0.065 . 
+depth         0.05330  0.99858 0.0881  0.035 * 
+PAR          -0.05451 -0.99851 0.0641  0.088 . 
+salinity      0.37684 -0.92628 0.0120  0.637   
+oxygen       -0.06678  0.99777 0.1365  0.004 **
+O_saturation  0.22184  0.97508 0.0507  0.157   
+fluorescence -0.16442  0.98639 0.1342  0.007 **
+beam_trans    0.95229  0.30518 0.0322  0.291   
+water_temp   -0.24862 -0.96860 0.0576  0.118   
+conductivity -0.17490 -0.98459 0.0348  0.295   
+NH4          -0.18540 -0.98266 0.0167  0.535   
+NO2NO3        0.09941 -0.99505 0.1615  0.002 **
+PO4           0.13539 -0.99079 0.0144  0.586   
+Chla         -0.59476  0.80390 0.0575  0.106   
+Chao1         0.16413  0.98644 0.0216  0.440   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+Mam <- subset_taxa(pico, genus == "Micromonas")
+Mam = prune_samples(sample_sums(Mam) != 0, Mam)
+Mam = transform_sample_counts(Mam, function(x) 100 * x/sum(x)) 
+
+dUNIFRAC = UniFrac(torun, weighted=FALSE, normalized=TRUE, fast=TRUE)
+ordMDS <- metaMDS(t(otu_table(torun)), comm = dUNIFRAC)
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_PE_UnifracUnW_picoMicromonas.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)    
+Bprod         0.84285  0.53815 0.2602  0.013 *  
+Pprod_PAR     0.69800  0.71610 0.3403  0.003 ** 
+ice          -0.41315 -0.91066 0.3663  0.002 ** 
+air_temp     -0.00506 -0.99999 0.1010  0.214    
+depth        -0.94029  0.34038 0.0306  0.652    
+PAR           0.44942 -0.89332 0.0944  0.235    
+salinity     -0.35540 -0.93471 0.1095  0.189    
+oxygen        0.20478  0.97881 0.2182  0.025 *  
+O_saturation -0.55919  0.82904 0.2699  0.007 ** 
+fluorescence  0.36045  0.93278 0.4074  0.001 ***
+beam_trans   -0.99726  0.07392 0.1944  0.030 *  
+water_temp    0.62691 -0.77909 0.3039  0.001 ***
+conductivity  0.43381 -0.90101 0.2009  0.030 *  
+NH4           0.77620 -0.63049 0.0215  0.725    
+NO2NO3       -0.24163 -0.97037 0.4279  0.002 ** 
+PO4          -0.21431 -0.97677 0.1223  0.141    
+Chla          0.81938  0.57325 0.3399  0.001 ***
+Chao1        -0.72468 -0.68909 0.0856  0.296    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
+
+dUNIFRAC = UniFrac(torun, weighted=TRUE, normalized=TRUE, fast=TRUE)
+ordMDS <- metaMDS(t(otu_table(torun)), comm = dUNIFRAC)
+ordMDS.fit <- envfit(ordMDS ~ Bprod + Pprod_PAR + ice + air_temp + depth + PAR + salinity + oxygen + O_saturation + fluorescence + beam_trans + water_temp + conductivity + NH4 + NO2NO3 + PO4 + Chla + Chao1 , data=sample.data.table(torun), perm=999, na.rm = TRUE)
+pdf("NMDS_PE_UnifracW_picoMicromonas.pdf")
+plot(ordMDS, dis="site")
+plot(ordMDS.fit)
+text(ordMDS, display="sites")
+dev.off()
+
+***VECTORS
+
+                NMDS1    NMDS2     r2 Pr(>r)  
+Bprod         0.83177  0.55512 0.0618  0.380  
+Pprod_PAR    -0.00507  0.99999 0.0528  0.412  
+ice           0.92003  0.39184 0.1706  0.041 *
+air_temp      0.04409  0.99903 0.0449  0.309  
+depth        -0.42917 -0.90322 0.2262  0.019 *
+PAR          -0.15617  0.98773 0.3316  0.029 *
+salinity     -0.99042 -0.13811 0.2143  0.035 *
+oxygen        0.99966 -0.02607 0.0962  0.244  
+O_saturation  0.70351 -0.71068 0.1375  0.113  
+fluorescence  0.09356 -0.99561 0.0376  0.575  
+beam_trans   -0.86215 -0.50666 0.0978  0.121  
+water_temp   -0.60909  0.79310 0.1133  0.131  
+conductivity -0.83529  0.54981 0.1604  0.105  
+NH4           0.05096  0.99870 0.0854  0.276  
+NO2NO3       -0.52444  0.85144 0.0653  0.428  
+PO4          -0.86615 -0.49978 0.0151  0.811  
+Chla          0.90957  0.41554 0.0442  0.397  
+Chao1        -0.82259  0.56864 0.1449  0.115  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+Permutation: free
+Number of permutations: 999
