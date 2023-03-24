@@ -1,0 +1,5 @@
+lmgsize = c("nanopico", "all")
+lmglayer = c("Bucket", "Pycnocline")
+# Here's the recommended/intended one line
+lmg <- subset_samples(physeq, size %in% lmgsize)
+lmg <- subset_samples(lmg, layer %in% lmglayer)
