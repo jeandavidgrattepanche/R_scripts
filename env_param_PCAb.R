@@ -20,3 +20,14 @@ summary(env.pca)
 #PCAplot <- 
 autoplot(env.pca, data = envdata, colour= 'Group', shape = 'depth', label = TRUE, label.size = 3, loadings = TRUE, loadings.label = TRUE, loadings.label.size =3, loadings.colour = 'black', loadings.label.colour = 'black', size = 5)
 # plotPmplus <- PCAplot + geom_point(size=3) 
+
+
+##HPC
+env.all <- read.table('Envdata_NBP.txt',sep="\t",header=TRUE,row.names=1)
+envdata = sample_data(env.all)
+envdata2 = sample_data(data.frame(scale(env.all[c(8:26)])))
+row.names(envdata2) <- env.all$sample
+env.pca <- prcomp(envdata2, center = TRUE, scale = TRUE)
+pdf("env_data_plot.pdf")
+autoplot(env.pca, data = envdata, colour='Group_name', shape = 'layer', label = TRUE, label.size= 3, loadings = TRUE, loadings.label = TRUE, loadings.label.size = 3, loadings.colour= 'black', loadings.label.colour = 'black', size = 5)
+dev.off()
