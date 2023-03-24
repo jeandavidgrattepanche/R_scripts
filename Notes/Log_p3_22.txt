@@ -3,3 +3,17 @@ lmglayer = c("Bucket", "Pycnocline")
 # Here's the recommended/intended one line
 lmg <- subset_samples(physeq, size %in% lmgsize)
 lmg <- subset_samples(lmg, layer %in% lmglayer)
+
+
+Fresh <- subset_samples(physeq, station == "Schuylkill")
+
+Check issue with size and station
+scheck <- c("PS15B", "PS16")
+checkst <- subset_samples(physeq, station  %in% scheck)
+PcoA <- ordinate(checkst, "PCoA", distance = "bray")
+ordplotP <- plot_ordination(checkst, PcoA, color="Group_name", shape="size",label="sample", title="NBP2205_size_issue")
+ordplotPplus <- ordplotP + geom_point(size=3)
+pdf('PCOA_Bray_P3G_NBP2205_ST.pdf')
+plot(ordplotPplus)
+dev.off()
+
