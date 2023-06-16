@@ -18,7 +18,7 @@ summary(env.pca)
 #as.data.frame %>%
 #ggplot(aes(x=PC1,y=PC2)) + geom_point(size=4) + theme_bw(base_size=32) + labs(x=paste0("PC1: ", round(varexp[1]*100,1),"%"), y=paste0("PC2: ",round(varexp[2]*100,1), "%")) + theme(legend.position="top")
 #PCAplot <- 
-autoplot(env.pca, data = envdata, colour= 'Group', shape = 'depth', label = TRUE, label.size = 3, loadings = TRUE, loadings.label = TRUE, loadings.label.size =3, loadings.colour = 'black', loadings.label.colour = 'black', size = 5)
+autoplot(env.pca, data = envdata, colour= 'Group', shape = 'Cruise', label = TRUE, label.size = 3, loadings = TRUE, loadings.label = TRUE, loadings.label.size =3, loadings.colour = 'black', loadings.label.colour = 'black', size = 5)
 # plotPmplus <- PCAplot + geom_point(size=3) 
 
 
@@ -28,6 +28,7 @@ envdata = sample_data(env.all)
 envdata2 = sample_data(data.frame(scale(env.all[c(8:26)])))
 row.names(envdata2) <- env.all$sample
 env.pca <- prcomp(envdata2, center = TRUE, scale = TRUE)
-pdf("env_data_plot.pdf")
-autoplot(env.pca, data = envdata, colour='Group_name', shape = 'layer', label = TRUE, label.size= 3, loadings = TRUE, loadings.label = TRUE, loadings.label.size = 3, loadings.colour= 'black', loadings.label.colour = 'black', size = 5)
+pdf("env_dataANT1923_plot.pdf")
+pl <- autoplot(env.pca, data = envdata, colour='LocSea', shape = 'Cruise', label = TRUE, label.size= 3, loadings = TRUE, loadings.label = TRUE, loadings.label.size = 3, loadings.colour= 'black', loadings.label.colour = 'black', size = 5)
+pl + scale_color_gradientn(colours = rainbow(5))
 dev.off()
